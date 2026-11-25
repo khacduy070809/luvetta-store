@@ -1,0 +1,25 @@
+name: Kiểm thử
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Cài thư viện cho script của Muse
+        run: pip install pillow
+      - name: Test Python (skill, script, dữ liệu)
+        run: python -m unittest discover -s tests -v
+      - name: Test chatbot (Node)
+        run: node --test tests/worker.test.mjs
