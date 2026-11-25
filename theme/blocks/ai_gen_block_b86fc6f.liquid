@@ -1,0 +1,554 @@
+{% doc %}
+  @prompt
+    Create a "Value Destroyer Comparison Table" section for a Shopify product page with this exact layout:
+    
+    - Title: customizable (default: "Value Destroyer Table")
+    - 3 columns: Row Label | Column 1 (default: "Real Cards") | Column 2 (default: "MTGproxyHub")
+    - 5 configurable rows, each row has:
+      - Row label (bold, dark background like #1a1a2e)
+      - Column 1 value: free text field
+      - Column 2 value: free text field
+      - Each value can be plain text (e.g. "$59.99", "3-5 days USPS") OR a special keyword: "check" = green ✅, "cross" = red ❌
+    
+    Default rows pre-filled:
+    1. Label: "Commander Deck" | Col1: "~$400–$600" | Col2: "$59.99"
+    2. Label: "Foil Upgrade" | Col1: "+$200–$400" | Col2: "+$20"
+    3. Label: "Shipping Time" | Col1: "3–7 days" | Col2: "3–5 days USPS"
+    4. Label: "Casual & Commander Play" | Col1: "check" | Col2: "check"
+    5. Label: "Sanctioned Tournament Play" | Col1: "check" | Col2: "cross"
+    
+    Design:
+    - Dark row labels column (#1a1a2e background, white bold text)
+    - Light alternating rows for values
+    - Column 2 (MTGproxyHub) header slightly highlighted (green accent or bold)
+    - Clean, minimal, mobile responsive
+    - No external libraries
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-value-table-{{ ai_gen_id }} {
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    display: block;
+  }
+
+  .ai-value-table__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_size }}px;
+    margin: 0 0 20px;
+    text-align: {{ block.settings.title_alignment }};
+    color: {{ block.settings.title_color }};
+  }
+
+  .ai-value-table__wrapper-{{ ai_gen_id }} {
+    overflow-x: auto;
+    border-radius: {{ block.settings.table_border_radius }}px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-value-table__table-{{ ai_gen_id }} {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: {{ block.settings.table_bg_color }};
+  }
+
+  .ai-value-table__header-{{ ai_gen_id }} {
+    background-color: {{ block.settings.header_bg_color }};
+  }
+
+  .ai-value-table__header-cell-{{ ai_gen_id }} {
+    padding: 16px;
+    text-align: center;
+    font-weight: 600;
+    font-size: {{ block.settings.header_text_size }}px;
+    color: {{ block.settings.header_text_color }};
+    border-bottom: 2px solid {{ block.settings.border_color }};
+  }
+
+  .ai-value-table__header-cell-{{ ai_gen_id }}:first-child {
+    text-align: left;
+    width: 35%;
+  }
+
+  .ai-value-table__header-cell--highlight-{{ ai_gen_id }} {
+    background-color: {{ block.settings.highlight_column_bg }};
+    color: {{ block.settings.highlight_column_text }};
+    position: relative;
+  }
+
+  .ai-value-table__row-{{ ai_gen_id }} {
+    border-bottom: 1px solid {{ block.settings.border_color }};
+  }
+
+  .ai-value-table__row-{{ ai_gen_id }}:nth-child(even) {
+    background-color: {{ block.settings.row_alt_bg_color }};
+  }
+
+  .ai-value-table__cell-label-{{ ai_gen_id }} {
+    padding: 16px;
+    font-weight: 700;
+    background-color: {{ block.settings.label_bg_color }};
+    color: {{ block.settings.label_text_color }};
+    font-size: {{ block.settings.cell_text_size }}px;
+    text-align: left;
+    width: 35%;
+  }
+
+  .ai-value-table__cell-{{ ai_gen_id }} {
+    padding: 16px;
+    text-align: center;
+    font-size: {{ block.settings.cell_text_size }}px;
+    color: {{ block.settings.cell_text_color }};
+  }
+
+  .ai-value-table__cell--highlight-{{ ai_gen_id }} {
+    background-color: {{ block.settings.highlight_cell_bg }};
+    font-weight: 600;
+  }
+
+  .ai-value-table__icon-{{ ai_gen_id }} {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+  }
+
+  .ai-value-table__icon--check-{{ ai_gen_id }} {
+    color: {{ block.settings.check_color }};
+  }
+
+  .ai-value-table__icon--cross-{{ ai_gen_id }} {
+    color: {{ block.settings.cross_color }};
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-value-table__title-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.title_size }}px * 0.8);
+    }
+
+    .ai-value-table__header-cell-{{ ai_gen_id }},
+    .ai-value-table__cell-{{ ai_gen_id }},
+    .ai-value-table__cell-label-{{ ai_gen_id }} {
+      padding: 12px 8px;
+      font-size: calc({{ block.settings.cell_text_size }}px * 0.9);
+    }
+
+    .ai-value-table__header-cell-{{ ai_gen_id }} {
+      font-size: calc({{ block.settings.header_text_size }}px * 0.85);
+    }
+  }
+{% endstyle %}
+
+<value-table-{{ ai_gen_id }} class="ai-value-table-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  {% if block.settings.table_title != blank %}
+    <h2 class="ai-value-table__title-{{ ai_gen_id }}">{{ block.settings.table_title }}</h2>
+</p>
+
+  {% endif %}
+
+  <div class="ai-value-table__wrapper-{{ ai_gen_id }}">
+    <table class="ai-value-table__table-{{ ai_gen_id }}">
+      <thead class="ai-value-table__header-{{ ai_gen_id }}">
+        <tr>
+          <th class="ai-value-table__header-cell-{{ ai_gen_id }}"></th>
+          <th class="ai-value-table__header-cell-{{ ai_gen_id }}">{{ block.settings.column_1_header }}</th>
+          <th class="ai-value-table__header-cell-{{ ai_gen_id }} ai-value-table__header-cell--highlight-{{ ai_gen_id }}">
+            {{ block.settings.column_2_header }}
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for i in (1..5) %}
+          {% liquid
+            assign row_label_key = 'row_' | append: i | append: '_label'
+            assign row_col1_key = 'row_' | append: i | append: '_col1'
+            assign row_col2_key = 'row_' | append: i | append: '_col2'
+
+            assign row_label = block.settings[row_label_key]
+            assign row_col1 = block.settings[row_col1_key]
+            assign row_col2 = block.settings[row_col2_key]
+          %}
+
+          {% if row_label != blank %}
+            <tr class="ai-value-table__row-{{ ai_gen_id }}">
+              <td class="ai-value-table__cell-label-{{ ai_gen_id }}">{{ row_label }}</td>
+              <td class="ai-value-table__cell-{{ ai_gen_id }}">
+                {% if row_col1 == 'check' %}
+                  <span class="ai-value-table__icon-{{ ai_gen_id }} ai-value-table__icon--check-{{ ai_gen_id }}">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                {% elsif row_col1 == 'cross' %}
+                  <span class="ai-value-table__icon-{{ ai_gen_id }} ai-value-table__icon--cross-{{ ai_gen_id }}">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                {% else %}
+                  {{ row_col1 }}
+                {% endif %}
+              </td>
+              <td class="ai-value-table__cell-{{ ai_gen_id }} ai-value-table__cell--highlight-{{ ai_gen_id }}">
+                {% if row_col2 == 'check' %}
+                  <span class="ai-value-table__icon-{{ ai_gen_id }} ai-value-table__icon--check-{{ ai_gen_id }}">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M20 6L9 17L4 12" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                {% elsif row_col2 == 'cross' %}
+                  <span class="ai-value-table__icon-{{ ai_gen_id }} ai-value-table__icon--cross-{{ ai_gen_id }}">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                {% else %}
+                  {{ row_col2 }}
+                {% endif %}
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</value-table-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class ValueTable{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+      }
+
+      connectedCallback() {
+        this.style.display = 'block';
+      }
+    }
+
+    customElements.define('value-table-{{ ai_gen_id }}', ValueTable{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Value destroyer table",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Table title"
+    },
+    {
+      "type": "text",
+      "id": "table_title",
+      "label": "Title",
+      "default": "Value Destroyer Table"
+    },
+    {
+      "type": "range",
+      "id": "title_size",
+      "label": "Title size",
+      "min": 16,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "select",
+      "id": "title_alignment",
+      "label": "Title alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#121212"
+    },
+    {
+      "type": "header",
+      "content": "Column headers"
+    },
+    {
+      "type": "text",
+      "id": "column_1_header",
+      "label": "Column 1 header",
+      "default": "Real Cards"
+    },
+    {
+      "type": "text",
+      "id": "column_2_header",
+      "label": "Column 2 header",
+      "default": "MTGproxyHub"
+    },
+    {
+      "type": "header",
+      "content": "Row 1"
+    },
+    {
+      "type": "text",
+      "id": "row_1_label",
+      "label": "Label",
+      "default": "Commander Deck"
+    },
+    {
+      "type": "text",
+      "id": "row_1_col1",
+      "label": "Column 1 value",
+      "default": "~$400–$600",
+      "info": "Use 'check' for ✅ or 'cross' for ❌"
+    },
+    {
+      "type": "text",
+      "id": "row_1_col2",
+      "label": "Column 2 value",
+      "default": "$59.99",
+      "info": "Use 'check' for ✅ or 'cross' for ❌"
+    },
+    {
+      "type": "header",
+      "content": "Row 2"
+    },
+    {
+      "type": "text",
+      "id": "row_2_label",
+      "label": "Label",
+      "default": "Foil Upgrade"
+    },
+    {
+      "type": "text",
+      "id": "row_2_col1",
+      "label": "Column 1 value",
+      "default": "+$200–$400",
+      "info": "Use 'check' for ✅ or 'cross' for ❌"
+    },
+    {
+      "type": "text",
+      "id": "row_2_col2",
+      "label": "Column 2 value",
+      "default": "+$20",
+      "info": "Use 'check' for ✅ or 'cross' for ❌"
+    },
+    {
+      "type": "header",
+      "content": "Row 3"
+    },
+    {
+      "type": "text",
+      "id": "row_3_label",
+      "label": "Label",
+      "default": "Shipping Time"
+    },
+    {
+      "type": "text",
+      "id": "row_3_col1",
+      "label": "Column 1 value",
+      "default": "3–7 days",
+      "info": "Use 'check' for ✅ or 'cross' for ❌"
+    },
+    {
+      "type": "text",
+      "id": "row_3_col2",
+      "label": "Column 2 value",
+      "default": "3–5 days USPS",
+      "info": "Use 'check' for ✅ or 'cross' for ❌"
+    },
+    {
+      "type": "header",
+      "content": "Row 4"
+    },
+    {
+      "type": "text",
+      "id": "row_4_label",
+      "label": "Label",
+      "default": "Casual & Commander Play"
+    },
+    {
+      "type": "text",
+      "id": "row_4_col1",
+      "label": "Column 1 value",
+      "default": "check",
+      "info": "Use 'check' for ✅ or 'cross' for ❌"
+    },
+    {
+      "type": "text",
+      "id": "row_4_col2",
+      "label": "Column 2 value",
+      "default": "check",
+      "info": "Use 'check' for ✅ or 'cross' for ❌"
+    },
+    {
+      "type": "header",
+      "content": "Row 5"
+    },
+    {
+      "type": "text",
+      "id": "row_5_label",
+      "label": "Label",
+      "default": "Sanctioned Tournament Play"
+    },
+    {
+      "type": "text",
+      "id": "row_5_col1",
+      "label": "Column 1 value",
+      "default": "check",
+      "info": "Use 'check' for ✅ or 'cross' for ❌"
+    },
+    {
+      "type": "text",
+      "id": "row_5_col2",
+      "label": "Column 2 value",
+      "default": "cross",
+      "info": "Use 'check' for ✅ or 'cross' for ❌"
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "range",
+      "id": "table_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "header_text_size",
+      "label": "Header text size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "cell_text_size",
+      "label": "Cell text size",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "table_bg_color",
+      "label": "Table background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "header_bg_color",
+      "label": "Header background",
+      "default": "#f5f5f5"
+    },
+    {
+      "type": "color",
+      "id": "header_text_color",
+      "label": "Header text",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "label_bg_color",
+      "label": "Label background",
+      "default": "#1a1a2e"
+    },
+    {
+      "type": "color",
+      "id": "label_text_color",
+      "label": "Label text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "cell_text_color",
+      "label": "Cell text",
+      "default": "#121212"
+    },
+    {
+      "type": "color",
+      "id": "row_alt_bg_color",
+      "label": "Alternate row background",
+      "default": "#f9f9f9"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border",
+      "default": "#e0e0e0"
+    },
+    {
+      "type": "color",
+      "id": "highlight_column_bg",
+      "label": "Highlight column header background",
+      "default": "#3c871a"
+    },
+    {
+      "type": "color",
+      "id": "highlight_column_text",
+      "label": "Highlight column header text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "highlight_cell_bg",
+      "label": "Highlight column cell background",
+      "default": "#f0f8ed"
+    },
+    {
+      "type": "color",
+      "id": "check_color",
+      "label": "Check icon",
+      "default": "#3c871a"
+    },
+    {
+      "type": "color",
+      "id": "cross_color",
+      "label": "Cross icon",
+      "default": "#d32f2f"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Value destroyer table"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,870 @@
+{% doc %}
+  @prompt
+    Create a custom product variant picker section/block for a Shopify product page with two parts:
+    
+    **Part 1 — Package Type selector** (styled card buttons):
+    - Option name: "Package Type"
+    - Two values displayed as tall bordered card buttons side by side:
+      - Card 1: emoji 🃏, title "Cards Only", description "100+ Cards + Tokens", price "$59.99", badge "[Most Popular]"
+      - Card 2: emoji 🎁, title "Premium Bundle", description "100+ Cards + Tokens + Deck Box + Sleeves", price "$79.99", badge "[Best Value]"
+    - Selected card has a highlighted border (gold or white glow)
+    - Dark background, monospace/terminal font style
+    
+    **Part 2 — Foil Type selector** (color swatch buttons):
+    - Option name: "Foil Type"
+    - Three swatch buttons in a row:
+      - Non-Foil — $0 (dark/black swatch)
+      - Rainbow Foil — +$15 (rainbow gradient swatch)
+      - Snow Foil — +$15 (light blue/white swatch)
+    - Selected swatch has highlighted border
+    
+    Both selectors must update Shopify variant selection using data-option-index and dispatching change events on the hidden variant select element. Dark-themed, minimal, premium style.
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-variant-picker-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding }}px;
+    border-radius: {{ block.settings.border_radius }}px;
+    font-family: {{ block.settings.font_family.family }}, monospace;
+  }
+
+  .ai-variant-picker__section-{{ ai_gen_id }} {
+    margin-bottom: 24px;
+  }
+
+  .ai-variant-picker__section-{{ ai_gen_id }}:last-child {
+    margin-bottom: 0;
+  }
+
+  .ai-variant-picker__label-{{ ai_gen_id }} {
+    display: block;
+    font-size: {{ block.settings.label_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.label_color }};
+    margin-bottom: 12px;
+    letter-spacing: 0.5px;
+  }
+
+  .ai-variant-picker__package-grid-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .ai-variant-picker__package-card-{{ ai_gen_id }} {
+    position: relative;
+    background-color: {{ block.settings.card_bg_color }};
+    border: {{ block.settings.card_border_width }}px solid {{ block.settings.card_border_color }};
+    border-radius: {{ block.settings.card_border_radius }}px;
+    padding: 20px 16px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .ai-variant-picker__package-card-{{ ai_gen_id }}:hover {
+    border-color: {{ block.settings.card_hover_border_color }};
+    transform: translateY(-2px);
+  }
+
+  .ai-variant-picker__package-card-{{ ai_gen_id }}.selected {
+    border-color: {{ block.settings.card_selected_border_color }};
+    border-width: {{ block.settings.card_selected_border_width }}px;
+    box-shadow: 0 0 {{ block.settings.glow_size }}px {{ block.settings.card_selected_border_color }};
+  }
+
+  .ai-variant-picker__package-emoji-{{ ai_gen_id }} {
+    font-size: 40px;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .ai-variant-picker__package-title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_title_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.card_text_color }};
+    margin-bottom: 8px;
+  }
+
+  .ai-variant-picker__package-desc-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_desc_size }}px;
+    color: {{ block.settings.card_desc_color }};
+    margin-bottom: 12px;
+    line-height: 1.4;
+  }
+
+  .ai-variant-picker__package-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.card_price_size }}px;
+    font-weight: 700;
+    color: {{ block.settings.card_price_color }};
+    margin-bottom: 8px;
+  }
+
+  .ai-variant-picker__package-badge-{{ ai_gen_id }} {
+    display: inline-block;
+    background-color: {{ block.settings.badge_bg_color }};
+    color: {{ block.settings.badge_text_color }};
+    font-size: {{ block.settings.badge_size }}px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 12px;
+    letter-spacing: 0.3px;
+  }
+
+  .ai-variant-picker__foil-grid-{{ ai_gen_id }} {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .ai-variant-picker__foil-swatch-{{ ai_gen_id }} {
+    position: relative;
+    flex: 1;
+    min-width: 100px;
+    background-color: {{ block.settings.swatch_bg_color }};
+    border: {{ block.settings.swatch_border_width }}px solid {{ block.settings.swatch_border_color }};
+    border-radius: {{ block.settings.swatch_border_radius }}px;
+    padding: 16px 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .ai-variant-picker__foil-swatch-{{ ai_gen_id }}:hover {
+    border-color: {{ block.settings.swatch_hover_border_color }};
+    transform: translateY(-2px);
+  }
+
+  .ai-variant-picker__foil-swatch-{{ ai_gen_id }}.selected {
+    border-color: {{ block.settings.swatch_selected_border_color }};
+    border-width: {{ block.settings.swatch_selected_border_width }}px;
+    box-shadow: 0 0 {{ block.settings.glow_size }}px {{ block.settings.swatch_selected_border_color }};
+  }
+
+  .ai-variant-picker__foil-color-{{ ai_gen_id }} {
+    width: 100%;
+    height: 40px;
+    border-radius: 6px;
+    margin-bottom: 8px;
+  }
+
+  .ai-variant-picker__foil-color-{{ ai_gen_id }}.non-foil {
+    background: {{ block.settings.non_foil_color }};
+  }
+
+  .ai-variant-picker__foil-color-{{ ai_gen_id }}.rainbow-foil {
+    background: {{ block.settings.rainbow_foil_gradient }};
+  }
+
+  .ai-variant-picker__foil-color-{{ ai_gen_id }}.snow-foil {
+    background: {{ block.settings.snow_foil_gradient }};
+  }
+
+  .ai-variant-picker__foil-name-{{ ai_gen_id }} {
+    font-size: {{ block.settings.swatch_name_size }}px;
+    font-weight: 600;
+    color: {{ block.settings.swatch_text_color }};
+    margin-bottom: 4px;
+  }
+
+  .ai-variant-picker__foil-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.swatch_price_size }}px;
+    color: {{ block.settings.swatch_price_color }};
+    font-weight: 500;
+  }
+
+  .ai-variant-picker__hidden-select-{{ ai_gen_id }} {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-variant-picker__package-grid-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+    }
+
+    .ai-variant-picker__foil-grid-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+
+    .ai-variant-picker__foil-swatch-{{ ai_gen_id }} {
+      min-width: 100%;
+    }
+  }
+{% endstyle %}
+
+<variant-picker-{{ ai_gen_id }}
+  class="ai-variant-picker-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+  data-product-id="{{ product.id }}"
+>
+  {% if product.has_only_default_variant == false %}
+    <div class="ai-variant-picker__section-{{ ai_gen_id }}">
+      <label class="ai-variant-picker__label-{{ ai_gen_id }}">
+        {{ block.settings.package_label }}
+      </label>
+      <div class="ai-variant-picker__package-grid-{{ ai_gen_id }}">
+        <div
+          class="ai-variant-picker__package-card-{{ ai_gen_id }}"
+          data-option-index="0"
+          data-option-value="{{ block.settings.package_1_value }}"
+        >
+          <span class="ai-variant-picker__package-emoji-{{ ai_gen_id }}">{{ block.settings.package_1_emoji }}</span>
+          <div class="ai-variant-picker__package-title-{{ ai_gen_id }}">{{ block.settings.package_1_title }}</div>
+          <div class="ai-variant-picker__package-desc-{{ ai_gen_id }}">{{ block.settings.package_1_desc }}</div>
+          <div class="ai-variant-picker__package-price-{{ ai_gen_id }}">{{ block.settings.package_1_price }}</div>
+          {% if block.settings.package_1_badge != blank %}
+            <span class="ai-variant-picker__package-badge-{{ ai_gen_id }}">{{ block.settings.package_1_badge }}</span>
+          {% endif %}
+        </div>
+
+        <div
+          class="ai-variant-picker__package-card-{{ ai_gen_id }}"
+          data-option-index="0"
+          data-option-value="{{ block.settings.package_2_value }}"
+        >
+          <span class="ai-variant-picker__package-emoji-{{ ai_gen_id }}">{{ block.settings.package_2_emoji }}</span>
+          <div class="ai-variant-picker__package-title-{{ ai_gen_id }}">{{ block.settings.package_2_title }}</div>
+          <div class="ai-variant-picker__package-desc-{{ ai_gen_id }}">{{ block.settings.package_2_desc }}</div>
+          <div class="ai-variant-picker__package-price-{{ ai_gen_id }}">{{ block.settings.package_2_price }}</div>
+          {% if block.settings.package_2_badge != blank %}
+            <span class="ai-variant-picker__package-badge-{{ ai_gen_id }}">{{ block.settings.package_2_badge }}</span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+
+    <div class="ai-variant-picker__section-{{ ai_gen_id }}">
+      <label class="ai-variant-picker__label-{{ ai_gen_id }}">
+        {{ block.settings.foil_label }}
+      </label>
+      <div class="ai-variant-picker__foil-grid-{{ ai_gen_id }}">
+        <div
+          class="ai-variant-picker__foil-swatch-{{ ai_gen_id }}"
+          data-option-index="1"
+          data-option-value="{{ block.settings.foil_1_value }}"
+        >
+          <div class="ai-variant-picker__foil-color-{{ ai_gen_id }} non-foil"></div>
+          <div class="ai-variant-picker__foil-name-{{ ai_gen_id }}">{{ block.settings.foil_1_name }}</div>
+          <div class="ai-variant-picker__foil-price-{{ ai_gen_id }}">{{ block.settings.foil_1_price }}</div>
+        </div>
+
+        <div
+          class="ai-variant-picker__foil-swatch-{{ ai_gen_id }}"
+          data-option-index="1"
+          data-option-value="{{ block.settings.foil_2_value }}"
+        >
+          <div class="ai-variant-picker__foil-color-{{ ai_gen_id }} rainbow-foil"></div>
+          <div class="ai-variant-picker__foil-name-{{ ai_gen_id }}">{{ block.settings.foil_2_name }}</div>
+          <div class="ai-variant-picker__foil-price-{{ ai_gen_id }}">{{ block.settings.foil_2_price }}</div>
+        </div>
+
+        <div
+          class="ai-variant-picker__foil-swatch-{{ ai_gen_id }}"
+          data-option-index="1"
+          data-option-value="{{ block.settings.foil_3_value }}"
+        >
+          <div class="ai-variant-picker__foil-color-{{ ai_gen_id }} snow-foil"></div>
+          <div class="ai-variant-picker__foil-name-{{ ai_gen_id }}">{{ block.settings.foil_3_name }}</div>
+          <div class="ai-variant-picker__foil-price-{{ ai_gen_id }}">{{ block.settings.foil_3_price }}</div>
+        </div>
+      </div>
+    </div>
+
+    <select
+      name="id"
+      id="ai-variant-select-{{ ai_gen_id }}"
+      class="ai-variant-picker__hidden-select-{{ ai_gen_id }}"
+    >
+      {% for variant in product.variants %}
+        <option
+          value="{{ variant.id }}"
+          {% if variant == product.selected_or_first_available_variant %}selected{% endif %}
+        >
+          {{ variant.title }} - {{ variant.price | money }}
+        </option>
+      {% endfor %}
+    </select>
+  {% else %}
+    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+  {% endif %}
+</variant-picker-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class VariantPicker{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.packageCards = this.querySelectorAll('.ai-variant-picker__package-card-{{ ai_gen_id }}');
+        this.foilSwatches = this.querySelectorAll('.ai-variant-picker__foil-swatch-{{ ai_gen_id }}');
+        this.variantSelect = this.querySelector('#ai-variant-select-{{ ai_gen_id }}');
+        this.selectedOptions = ['', ''];
+      }
+
+      connectedCallback() {
+        this.setupEventListeners();
+        this.initializeDefaultSelections();
+      }
+
+      setupEventListeners() {
+        this.packageCards.forEach((card) => {
+          card.addEventListener('click', () => {
+            this.handlePackageSelection(card);
+          });
+        });
+
+        this.foilSwatches.forEach((swatch) => {
+          swatch.addEventListener('click', () => {
+            this.handleFoilSelection(swatch);
+          });
+        });
+      }
+
+      initializeDefaultSelections() {
+        if (this.packageCards.length > 0) {
+          this.handlePackageSelection(this.packageCards[0]);
+        }
+        if (this.foilSwatches.length > 0) {
+          this.handleFoilSelection(this.foilSwatches[0]);
+        }
+      }
+
+      handlePackageSelection(selectedCard) {
+        this.packageCards.forEach((card) => card.classList.remove('selected'));
+        selectedCard.classList.add('selected');
+
+        const optionIndex = parseInt(selectedCard.getAttribute('data-option-index'));
+        const optionValue = selectedCard.getAttribute('data-option-value');
+        this.selectedOptions[optionIndex] = optionValue;
+
+        this.updateVariant();
+      }
+
+      handleFoilSelection(selectedSwatch) {
+        this.foilSwatches.forEach((swatch) => swatch.classList.remove('selected'));
+        selectedSwatch.classList.add('selected');
+
+        const optionIndex = parseInt(selectedSwatch.getAttribute('data-option-index'));
+        const optionValue = selectedSwatch.getAttribute('data-option-value');
+        this.selectedOptions[optionIndex] = optionValue;
+
+        this.updateVariant();
+      }
+
+      updateVariant() {
+        if (!this.variantSelect) return;
+
+        const options = this.variantSelect.querySelectorAll('option');
+        let matchedVariant = null;
+
+        options.forEach((option) => {
+          const variantTitle = option.textContent.split(' - ')[0].trim();
+          const variantOptions = variantTitle.split(' / ');
+
+          const matches = this.selectedOptions.every((selectedOption, index) => {
+            return !selectedOption || variantOptions[index] === selectedOption;
+          });
+
+          if (matches) {
+            matchedVariant = option;
+          }
+        });
+
+        if (matchedVariant) {
+          this.variantSelect.value = matchedVariant.value;
+          this.variantSelect.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      }
+    }
+
+    customElements.define('variant-picker-{{ ai_gen_id }}', VariantPicker{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Custom variant picker",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "General"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "padding",
+      "label": "Padding",
+      "min": 0,
+      "max": 60,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "font_picker",
+      "id": "font_family",
+      "label": "Font",
+      "default": "mono"
+    },
+    {
+      "type": "header",
+      "content": "Labels"
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "label_size",
+      "label": "Label size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "header",
+      "content": "Package type selector"
+    },
+    {
+      "type": "text",
+      "id": "package_label",
+      "label": "Label",
+      "default": "Package Type"
+    },
+    {
+      "type": "text",
+      "id": "package_1_value",
+      "label": "Package 1 variant value",
+      "default": "Cards Only"
+    },
+    {
+      "type": "text",
+      "id": "package_1_emoji",
+      "label": "Package 1 emoji",
+      "default": "🃏"
+    },
+    {
+      "type": "text",
+      "id": "package_1_title",
+      "label": "Package 1 title",
+      "default": "Cards Only"
+    },
+    {
+      "type": "text",
+      "id": "package_1_desc",
+      "label": "Package 1 description",
+      "default": "100+ Cards + Tokens"
+    },
+    {
+      "type": "text",
+      "id": "package_1_price",
+      "label": "Package 1 price",
+      "default": "$59.99"
+    },
+    {
+      "type": "text",
+      "id": "package_1_badge",
+      "label": "Package 1 badge",
+      "default": "Most Popular"
+    },
+    {
+      "type": "text",
+      "id": "package_2_value",
+      "label": "Package 2 variant value",
+      "default": "Premium Bundle"
+    },
+    {
+      "type": "text",
+      "id": "package_2_emoji",
+      "label": "Package 2 emoji",
+      "default": "🎁"
+    },
+    {
+      "type": "text",
+      "id": "package_2_title",
+      "label": "Package 2 title",
+      "default": "Premium Bundle"
+    },
+    {
+      "type": "text",
+      "id": "package_2_desc",
+      "label": "Package 2 description",
+      "default": "100+ Cards + Tokens + Deck Box + Sleeves"
+    },
+    {
+      "type": "text",
+      "id": "package_2_price",
+      "label": "Package 2 price",
+      "default": "$79.99"
+    },
+    {
+      "type": "text",
+      "id": "package_2_badge",
+      "label": "Package 2 badge",
+      "default": "Best Value"
+    },
+    {
+      "type": "header",
+      "content": "Package card style"
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Background",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Border",
+      "default": "#444444"
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "card_hover_border_color",
+      "label": "Hover border",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "card_selected_border_color",
+      "label": "Selected border",
+      "default": "#FFD700"
+    },
+    {
+      "type": "range",
+      "id": "card_selected_border_width",
+      "label": "Selected border width",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "card_text_color",
+      "label": "Title color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_title_size",
+      "label": "Title size",
+      "min": 14,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "color",
+      "id": "card_desc_color",
+      "label": "Description color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "range",
+      "id": "card_desc_size",
+      "label": "Description size",
+      "min": 11,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "card_price_color",
+      "label": "Price color",
+      "default": "#FFD700"
+    },
+    {
+      "type": "range",
+      "id": "card_price_size",
+      "label": "Price size",
+      "min": 16,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "header",
+      "content": "Badge style"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Background",
+      "default": "#3c871a"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "badge_size",
+      "label": "Text size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 11
+    },
+    {
+      "type": "header",
+      "content": "Foil type selector"
+    },
+    {
+      "type": "text",
+      "id": "foil_label",
+      "label": "Label",
+      "default": "Foil Type"
+    },
+    {
+      "type": "text",
+      "id": "foil_1_value",
+      "label": "Foil 1 variant value",
+      "default": "Non-Foil"
+    },
+    {
+      "type": "text",
+      "id": "foil_1_name",
+      "label": "Foil 1 name",
+      "default": "Non-Foil"
+    },
+    {
+      "type": "text",
+      "id": "foil_1_price",
+      "label": "Foil 1 price",
+      "default": "$0"
+    },
+    {
+      "type": "text",
+      "id": "foil_2_value",
+      "label": "Foil 2 variant value",
+      "default": "Rainbow Foil"
+    },
+    {
+      "type": "text",
+      "id": "foil_2_name",
+      "label": "Foil 2 name",
+      "default": "Rainbow Foil"
+    },
+    {
+      "type": "text",
+      "id": "foil_2_price",
+      "label": "Foil 2 price",
+      "default": "+$15"
+    },
+    {
+      "type": "text",
+      "id": "foil_3_value",
+      "label": "Foil 3 variant value",
+      "default": "Snow Foil"
+    },
+    {
+      "type": "text",
+      "id": "foil_3_name",
+      "label": "Foil 3 name",
+      "default": "Snow Foil"
+    },
+    {
+      "type": "text",
+      "id": "foil_3_price",
+      "label": "Foil 3 price",
+      "default": "+$15"
+    },
+    {
+      "type": "header",
+      "content": "Foil swatch style"
+    },
+    {
+      "type": "color",
+      "id": "swatch_bg_color",
+      "label": "Background",
+      "default": "#2a2a2a"
+    },
+    {
+      "type": "color",
+      "id": "swatch_border_color",
+      "label": "Border",
+      "default": "#444444"
+    },
+    {
+      "type": "range",
+      "id": "swatch_border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "swatch_hover_border_color",
+      "label": "Hover border",
+      "default": "#666666"
+    },
+    {
+      "type": "color",
+      "id": "swatch_selected_border_color",
+      "label": "Selected border",
+      "default": "#FFD700"
+    },
+    {
+      "type": "range",
+      "id": "swatch_selected_border_width",
+      "label": "Selected border width",
+      "min": 2,
+      "max": 6,
+      "step": 1,
+      "unit": "px",
+      "default": 3
+    },
+    {
+      "type": "range",
+      "id": "swatch_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color",
+      "id": "swatch_text_color",
+      "label": "Name color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "swatch_name_size",
+      "label": "Name size",
+      "min": 12,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "swatch_price_color",
+      "label": "Price color",
+      "default": "#cccccc"
+    },
+    {
+      "type": "range",
+      "id": "swatch_price_size",
+      "label": "Price size",
+      "min": 11,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "header",
+      "content": "Foil colors"
+    },
+    {
+      "type": "color",
+      "id": "non_foil_color",
+      "label": "Non-foil",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color_background",
+      "id": "rainbow_foil_gradient",
+      "label": "Rainbow foil"
+    },
+    {
+      "type": "color_background",
+      "id": "snow_foil_gradient",
+      "label": "Snow foil"
+    },
+    {
+      "type": "header",
+      "content": "Effects"
+    },
+    {
+      "type": "range",
+      "id": "glow_size",
+      "label": "Selection glow size",
+      "min": 0,
+      "max": 30,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom variant picker"
+    }
+  ]
+}
+{% endschema %}

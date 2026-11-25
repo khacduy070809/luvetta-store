@@ -1,0 +1,15 @@
+# Bí mật & dữ liệu cá nhân — KHÔNG commit
+.env
+*.env
+.dev.vars
+secrets/
+MEMORY.md
+**/memory/
+*customers*.csv
+*orders_detail*.csv
+# Hệ thống
+.DS_Store
+Thumbs.db
+__pycache__/
+node_modules/
+.wrangler/

@@ -1,0 +1,5 @@
+order,date,state,city,customer_email_masked,payment,fulfillment,total_usd,order_type
+#1001,2026-11-16,California,Los Angeles,n***@gmail.com,paid,unfulfilled,5,Cần xác minh
+#1002,2026-11-16,Utah,North Salt Lake,l***@gmail.com,paid,unfulfilled,5,Cần xác minh
+#1003,2026-11-17,California,Mountain View,j***@example.com,paid,unfulfilled,5,Test (example.com)
+#1004,2026-11-17,California,Los Angeles,h***@gmail.com,paid,unfulfilled,5,Cần xác minh

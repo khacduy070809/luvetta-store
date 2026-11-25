@@ -1,0 +1,557 @@
+{% doc %}
+  @prompt
+    Create a custom product variant picker block for the product page that replaces the default variant selector for the "Package Type" option. Style it as two side-by-side card buttons (like a subscription picker UI):
+    
+    Card 1 — "Cards Only" (left, selected by default):
+    - Badge floating on top center: "MOST POPULAR" (green pill/badge)
+    - Label: "CARDS ONLY" (small caps, muted)
+    - Price: "$59.99" (large bold)
+    - Subtitle: "100+ Cards + Tokens"
+    - Selected state: green border, light green background tint
+    
+    Card 2 — "Premium Bundle" (right, unselected):
+    - No badge
+    - Label: "PREMIUM BUNDLE" (small caps, muted)
+    - Price: "$79.99" (large bold)
+    - Subtitle: "100+ Cards + Tokens + Deck Box + Sleeves"
+    - Unselected state: light grey border, white/neutral background
+    
+    Design requirements:
+    - Light/neutral background to match standard Shopify storefront UI
+    - Cards sit side by side with equal width
+    - Rounded corners, clean minimal style
+    - Badge "MOST POPULAR" overlaps the top border of the card (positioned absolute, centered)
+    - Font: clean sans-serif
+    - On click, update the hidden Shopify variant select element for option index 0 ("Package Type") and dispatch a change event so the price and variant update correctly
+    - Mobile responsive: cards stack or shrink gracefully on small screens
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-variant-picker-{{ ai_gen_id }} {
+    display: block;
+    width: {{ block.settings.desktop_width_percent }}%;
+    max-width: 100%;
+  }
+
+  .ai-variant-picker-container-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: {{ block.settings.card_gap }}px;
+    width: 100%;
+  }
+
+  .ai-variant-card-{{ ai_gen_id }} {
+    position: relative;
+    background-color: {{ block.settings.card_bg_color }};
+    border: {{ block.settings.border_width }}px solid {{ block.settings.border_color }};
+    border-radius: {{ block.settings.border_radius }}px;
+    padding: {{ block.settings.card_padding }}px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: {{ block.settings.card_min_height }}px;
+  }
+
+  .ai-variant-card-{{ ai_gen_id }}:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  .ai-variant-card-{{ ai_gen_id }}.selected {
+    background-color: {{ block.settings.selected_bg_color }};
+    border-color: {{ block.settings.selected_border_color }};
+    border-width: {{ block.settings.selected_border_width }}px;
+  }
+
+  .ai-variant-badge-{{ ai_gen_id }} {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: {{ block.settings.badge_bg_color }};
+    color: {{ block.settings.badge_text_color }};
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+  }
+
+  .ai-variant-label-{{ ai_gen_id }} {
+    font-size: {{ block.settings.label_font_size }}px;
+    color: {{ block.settings.label_color }};
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .ai-variant-price-{{ ai_gen_id }} {
+    font-size: {{ block.settings.price_font_size }}px;
+    color: {{ block.settings.price_color }};
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+
+  .ai-variant-subtitle-{{ ai_gen_id }} {
+    font-size: {{ block.settings.subtitle_font_size }}px;
+    color: {{ block.settings.subtitle_color }};
+    line-height: 1.4;
+  }
+
+  .ai-variant-hidden-select-{{ ai_gen_id }} {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-variant-picker-container-{{ ai_gen_id }} {
+      {% if block.settings.mobile_stack %}
+        grid-template-columns: 1fr;
+      {% else %}
+        gap: {{ block.settings.card_gap | divided_by: 2 }}px;
+      {% endif %}
+    }
+
+    .ai-variant-card-{{ ai_gen_id }} {
+      padding: {{ block.settings.card_padding | times: 0.8 }}px;
+      min-height: {{ block.settings.card_min_height | times: 0.8 }}px;
+    }
+
+    .ai-variant-label-{{ ai_gen_id }} {
+      font-size: {{ block.settings.label_font_size | times: 0.9 }}px;
+    }
+
+    .ai-variant-price-{{ ai_gen_id }} {
+      font-size: {{ block.settings.price_font_size | times: 0.9 }}px;
+    }
+
+    .ai-variant-subtitle-{{ ai_gen_id }} {
+      font-size: {{ block.settings.subtitle_font_size | times: 0.9 }}px;
+    }
+  }
+{% endstyle %}
+
+<variant-picker-{{ ai_gen_id }}
+  class="ai-variant-picker-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+  data-option-index="{{ block.settings.option_index }}"
+>
+  <div class="ai-variant-picker-container-{{ ai_gen_id }}">
+    <div
+      class="ai-variant-card-{{ ai_gen_id }} selected"
+      data-option-value="{{ block.settings.option_1_value }}"
+      role="button"
+      tabindex="0"
+      aria-pressed="true"
+    >
+      {% if block.settings.show_badge_1 %}
+        <div class="ai-variant-badge-{{ ai_gen_id }}">{{ block.settings.badge_1_text }}</div>
+      {% endif %}
+      <div class="ai-variant-label-{{ ai_gen_id }}">{{ block.settings.option_1_label }}</div>
+      <div class="ai-variant-price-{{ ai_gen_id }}">{{ block.settings.option_1_price }}</div>
+      <div class="ai-variant-subtitle-{{ ai_gen_id }}">{{ block.settings.option_1_subtitle }}</div>
+    </div>
+
+    <div
+      class="ai-variant-card-{{ ai_gen_id }}"
+      data-option-value="{{ block.settings.option_2_value }}"
+      role="button"
+      tabindex="0"
+      aria-pressed="false"
+    >
+      {% if block.settings.show_badge_2 %}
+        <div class="ai-variant-badge-{{ ai_gen_id }}">{{ block.settings.badge_2_text }}</div>
+      {% endif %}
+      <div class="ai-variant-label-{{ ai_gen_id }}">{{ block.settings.option_2_label }}</div>
+      <div class="ai-variant-price-{{ ai_gen_id }}">{{ block.settings.option_2_price }}</div>
+      <div class="ai-variant-subtitle-{{ ai_gen_id }}">{{ block.settings.option_2_subtitle }}</div>
+    </div>
+  </div>
+
+  <select class="ai-variant-hidden-select-{{ ai_gen_id }}" aria-hidden="true">
+    <option value="{{ block.settings.option_1_value }}" selected>{{ block.settings.option_1_value }}</option>
+    <option value="{{ block.settings.option_2_value }}">{{ block.settings.option_2_value }}</option>
+  </select>
+</variant-picker-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class VariantPicker{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.cards = this.querySelectorAll('.ai-variant-card-{{ ai_gen_id }}');
+        this.hiddenSelect = this.querySelector('.ai-variant-hidden-select-{{ ai_gen_id }}');
+        this.optionIndex = parseInt(this.dataset.optionIndex);
+      }
+
+      connectedCallback() {
+        this.setupEventListeners();
+        this.findAndSyncWithProductForm();
+      }
+
+      setupEventListeners() {
+        this.cards.forEach((card) => {
+          card.addEventListener('click', () => this.handleCardClick(card));
+          card.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              this.handleCardClick(card);
+            }
+          });
+        });
+      }
+
+      handleCardClick(selectedCard) {
+        const optionValue = selectedCard.dataset.optionValue;
+
+        this.cards.forEach((card) => {
+          card.classList.remove('selected');
+          card.setAttribute('aria-pressed', 'false');
+        });
+
+        selectedCard.classList.add('selected');
+        selectedCard.setAttribute('aria-pressed', 'true');
+
+        this.hiddenSelect.value = optionValue;
+
+        this.updateProductForm(optionValue);
+      }
+
+      findAndSyncWithProductForm() {
+        const productForm = document.querySelector('product-form') || 
+                           document.querySelector('form[action*="/cart/add"]');
+        
+        if (productForm) {
+          this.productForm = productForm;
+          const existingSelect = productForm.querySelector(`select[data-index="${this.optionIndex}"]`) ||
+                                productForm.querySelectorAll('select')[this.optionIndex];
+          
+          if (existingSelect) {
+            this.productFormSelect = existingSelect;
+            existingSelect.style.display = 'none';
+          }
+        }
+      }
+
+      updateProductForm(optionValue) {
+        if (this.productFormSelect) {
+          const options = Array.from(this.productFormSelect.options);
+          const matchingOption = options.find(opt => opt.value === optionValue || opt.textContent.trim() === optionValue);
+          
+          if (matchingOption) {
+            this.productFormSelect.value = matchingOption.value;
+            
+            const changeEvent = new Event('change', { bubbles: true });
+            this.productFormSelect.dispatchEvent(changeEvent);
+          }
+        }
+      }
+    }
+
+    customElements.define('variant-picker-{{ ai_gen_id }}', VariantPicker{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Custom variant picker",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Configuration"
+    },
+    {
+      "type": "paragraph",
+      "content": "This block replaces the default variant selector. Make sure the option values match your product's variant option names exactly."
+    },
+    {
+      "type": "range",
+      "id": "option_index",
+      "label": "Product option index",
+      "min": 0,
+      "max": 2,
+      "step": 1,
+      "default": 0,
+      "info": "0 = first option, 1 = second option, 2 = third option"
+    },
+    {
+      "type": "range",
+      "id": "desktop_width_percent",
+      "label": "Desktop width",
+      "min": 50,
+      "max": 100,
+      "step": 5,
+      "unit": "%",
+      "default": 100
+    },
+    {
+      "type": "header",
+      "content": "Option 1 (left card)"
+    },
+    {
+      "type": "text",
+      "id": "option_1_value",
+      "label": "Option value",
+      "default": "Cards Only",
+      "info": "Must match the exact variant option name in your product"
+    },
+    {
+      "type": "text",
+      "id": "option_1_label",
+      "label": "Label",
+      "default": "CARDS ONLY"
+    },
+    {
+      "type": "text",
+      "id": "option_1_price",
+      "label": "Price",
+      "default": "$59.99"
+    },
+    {
+      "type": "text",
+      "id": "option_1_subtitle",
+      "label": "Subtitle",
+      "default": "100+ Cards + Tokens"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge_1",
+      "label": "Show badge",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "badge_1_text",
+      "label": "Badge text",
+      "default": "MOST POPULAR"
+    },
+    {
+      "type": "header",
+      "content": "Option 2 (right card)"
+    },
+    {
+      "type": "text",
+      "id": "option_2_value",
+      "label": "Option value",
+      "default": "Premium Bundle",
+      "info": "Must match the exact variant option name in your product"
+    },
+    {
+      "type": "text",
+      "id": "option_2_label",
+      "label": "Label",
+      "default": "PREMIUM BUNDLE"
+    },
+    {
+      "type": "text",
+      "id": "option_2_price",
+      "label": "Price",
+      "default": "$79.99"
+    },
+    {
+      "type": "text",
+      "id": "option_2_subtitle",
+      "label": "Subtitle",
+      "default": "100+ Cards + Tokens + Deck Box + Sleeves"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_badge_2",
+      "label": "Show badge",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "badge_2_text",
+      "label": "Badge text",
+      "default": "BEST VALUE"
+    },
+    {
+      "type": "header",
+      "content": "Card style"
+    },
+    {
+      "type": "range",
+      "id": "card_gap",
+      "label": "Gap between cards",
+      "min": 8,
+      "max": 32,
+      "step": 4,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "card_padding",
+      "label": "Card padding",
+      "min": 16,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_min_height",
+      "label": "Card minimum height",
+      "min": 120,
+      "max": 240,
+      "step": 10,
+      "unit": "px",
+      "default": 160
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "color",
+      "id": "card_bg_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e5e5e5"
+    },
+    {
+      "type": "header",
+      "content": "Selected card style"
+    },
+    {
+      "type": "color",
+      "id": "selected_bg_color",
+      "label": "Background color",
+      "default": "#f0fdf4"
+    },
+    {
+      "type": "color",
+      "id": "selected_border_color",
+      "label": "Border color",
+      "default": "#22c55e"
+    },
+    {
+      "type": "range",
+      "id": "selected_border_width",
+      "label": "Border width",
+      "min": 1,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 2
+    },
+    {
+      "type": "header",
+      "content": "Badge style"
+    },
+    {
+      "type": "color",
+      "id": "badge_bg_color",
+      "label": "Background color",
+      "default": "#22c55e"
+    },
+    {
+      "type": "color",
+      "id": "badge_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "label_font_size",
+      "label": "Label font size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "color",
+      "id": "label_color",
+      "label": "Label color",
+      "default": "#6b7280"
+    },
+    {
+      "type": "range",
+      "id": "price_font_size",
+      "label": "Price font size",
+      "min": 18,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 28
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price color",
+      "default": "#111827"
+    },
+    {
+      "type": "range",
+      "id": "subtitle_font_size",
+      "label": "Subtitle font size",
+      "min": 10,
+      "max": 16,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "color",
+      "id": "subtitle_color",
+      "label": "Subtitle color",
+      "default": "#6b7280"
+    },
+    {
+      "type": "header",
+      "content": "Mobile"
+    },
+    {
+      "type": "checkbox",
+      "id": "mobile_stack",
+      "label": "Stack cards on mobile",
+      "default": false,
+      "info": "If unchecked, cards will remain side by side on mobile"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom variant picker"
+    }
+  ]
+}
+{% endschema %}

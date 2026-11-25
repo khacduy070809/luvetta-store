@@ -1,0 +1,874 @@
+LUVETTA SHOP — BỘ PROMPT v3 (SIÊU CHI TIẾT)
+Tạo từ code thật của theme ngày 18/11/2026. Mỗi prompt có: bố cục, chữ nguyên văn, tên class + thông số giao diện, responsive, yêu cầu kỹ thuật.
+Cách dùng: copy MỘT prompt, thay [BỐI CẢNH CHUNG] bằng đoạn bên dưới, gửi cho ChatGPT, dán code trả về vào khối Custom Liquid.
+
+======================================================================
+BỐI CẢNH CHUNG
+======================================================================
+Shop Shopify "Luvetta Shop" (luvetta.store) bán Dainty Heart Initial Necklace cho thị trường Mỹ.
+Sản phẩm: dây chuyền mảnh có 2 mặt nhỏ RỜI nằm cạnh nhau — một trái tim trơn không khắc chữ và một chữ cái in hoa A–Z. Màu Gold hoặc Silver (chỉ là tên màu, không phải chất liệu).
+Bảng màu: nền #FFF7F3, nền phụ #F8EAE3, viền #EAD7C9, tiêu đề #56392F, chữ #5F4B43, điểm nhấn #B47E70, vàng champagne #C39762.
+Phong cách: nữ tính, tối giản, lãng mạn. Chữ khách nhìn thấy viết bằng tiếng Anh Mỹ.
+Font: dùng font kế thừa của theme cho chữ thường (font-family: inherit); tiêu đề serif theo đúng thông số trong từng prompt.
+
+
+######################################################################
+# TRANG CHỦ, HEADER, FOOTER
+######################################################################
+
+======================================================================
+1. TRUST BAR (DƯỚI HEADER)
+======================================================================
+VAI TRÒ: Bạn là lập trình viên Shopify chuyên Custom Liquid.
+BỐI CẢNH: [BỐI CẢNH CHUNG]
+NHIỆM VỤ: Viết thanh trust bar nằm ngay dưới header, hiển thị trên mọi trang.
+
+BỐ CỤC & HÀNH VI:
+- Một hàng căn giữa: cụm trái = 5 sao + điểm + số review; vạch ngăn dọc 1px; cụm phải = câu cộng đồng + link in đậm gạch chân.
+- Link lấy từ biến Liquid community_url khai báo ở dòng đầu, mở tab mới, rel="noopener noreferrer".
+- Thanh LUÔN hiển thị, không bọc trong {% if %}.
+
+NỘI DUNG CHỮ (dùng NGUYÊN VĂN, đúng thứ tự xuất hiện):
+- ★★★★★
+- 4.8
+- (1.5K+ Reviews)
+- 18+ Tournaments Hosted.
+- Join the community!
+
+THÔNG SỐ GIAO DIỆN (dùng ĐÚNG tên class và giá trị dưới đây; được thêm thuộc tính phụ nếu cần):
+.um-trust-bar { width: 100%; min-height: 46px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center; padding: 10px 15px; font-family: inherit }
+.um-trust-inner { display: flex; align-items: center; justify-content: center; gap: 16px; flex-wrap: wrap; color: #333333; font-size: 14px; line-height: 1.4; letter-spacing: 0.2px }
+.um-rating { display: flex; align-items: center; justify-content: center; gap: 8px; white-space: nowrap }
+.um-stars { color: #f4c95d; font-size: 19px; letter-spacing: 2px; line-height: 1; white-space: nowrap }
+.um-rating-score { font-weight: 700; color: #292929 }
+.um-review-count { font-weight: 400; color: #444444 }
+.um-trust-divider { width: 1px; height: 16px; background-color: #d4d4d4 }
+.um-community { display: flex; align-items: center; justify-content: center; gap: 4px; white-space: nowrap }
+.um-community-text { font-weight: 500; color: #333333 }
+.um-community-link { color: #222222; font-weight: 600; text-decoration: underline }
+.um-community-link:hover { opacity: 0.65 }
+
+RESPONSIVE:
+@media screen and (max-width: 600px):
+  .um-trust-bar { padding: 10px 8px }
+  .um-trust-inner { gap: 6px; flex-direction: column; font-size: 12px; letter-spacing: 0 }
+  .um-stars { font-size: 17px; letter-spacing: 1px }
+  .um-rating { gap: 6px }
+  .um-trust-divider { display: none }
+  .um-community { gap: 4px }
+
+YÊU CẦU KỸ THUẬT:
+- Không dùng thư viện ngoài; CSS và JS nằm gọn trong một khối, mọi class có prefix riêng như trên để không đụng CSS của theme.
+- Chỉ dùng Liquid chạy được trong khối Custom Liquid (không dùng section.settings, không cần {% schema %}).
+- Section phải hiển thị ngay khi dán code.
+
+TỰ KIỂM TRA trước khi trả lời: đối chiếu từng mục NỘI DUNG CHỮ và THÔNG SỐ GIAO DIỆN ở trên, không bỏ sót, không đổi chữ, không đổi màu.
+ĐỊNH DẠNG TRẢ VỀ: một khối code hoàn chỉnh để dán vào Custom Liquid, không giải thích dài.
+
+======================================================================
+2. STORY — IMAGE WITH TEXT (TRANG CHỦ)
+======================================================================
+VAI TRÒ: Bạn là lập trình viên Shopify chuyên Custom Liquid.
+BỐI CẢNH: [BỐI CẢNH CHUNG]
+NHIỆM VỤ: Viết section kể chuyện sản phẩm: chữ bên trái, ảnh dọc 9:16 bên phải.
+
+BỐ CỤC & HÀNH VI:
+- Nền section #FFF7F3, khung 2 cột căn giữa.
+- Cột trái: tiêu đề 2 dòng (dòng 2 là <span> màu #B47E70), 8 đoạn văn, đoạn cuối in đậm.
+- Cột phải: ảnh 9:16 bo góc, có bóng đổ nhẹ, loading="lazy", width 720 height 1280.
+- ID section ghép: 'heart-story-' | append: section.id | append: '-' | append: block.id; mọi CSS viết dưới #ID đó.
+
+NỘI DUNG CHỮ (dùng NGUYÊN VĂN, đúng thứ tự xuất hiện):
+- More Than a Necklace.
+- A Little Piece of You. ♡
+- Some letters mean more than just a name.
+- Maybe it's your own initial.
+- Maybe it's someone you love.
+- Or maybe it's a letter that reminds you of a moment you'll never forget.
+- That's what makes our
+- Dainty Heart Initial Necklace so special.
+- A tiny heart paired with a meaningful letter — simple, delicate, and made to feel personal.
+- It's the kind of little detail that makes an everyday outfit feel a bit more like you .
+- Whether you're treating yourself or surprising someone special, it's a sweet way to keep what matters close to your heart.
+- Choose your favorite initial from
+- A–Z , available in
+- Gold or Silver .
+- Because sometimes, the smallest things hold the biggest meaning. ♡
+
+ẢNH / VIDEO (dùng đúng URL):
+- https://cdn.shopify.com/s/files/1/0831/2465/0230/files/M_t_day_ch_S_va_trai_tim_vang_4fd923b6-2b74-4173-9254-d6b3fcc89e82.png?v=1794383100
+
+THÔNG SỐ GIAO DIỆN (dùng ĐÚNG tên class và giá trị dưới đây; được thêm thuộc tính phụ nếu cần):
+:root { width: 100%; background: #FFF7F3; padding: 55px 28px; font-family: inherit }
+.heart-story-container { max-width: 1140px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr); align-items: center }
+.heart-story-content { width: 100%; max-width: 550px }
+.heart-story-title { font-family: Georgia, "Times New Roman", serif; font-size: clamp(29px, 3.15vw, 41px); line-height: 1.2; font-weight: 700; letter-spacing: -0.5px; color: #56392F; margin: 0 0 25px }
+.heart-story-title span { color: #B47E70; display: block }
+.heart-story-description { color: #5F4B43; font-size: 14px; line-height: 1.72; font-weight: 400 }
+.heart-story-description p { margin: 0 0 13px }
+.heart-story-description strong { color: #56392F; font-weight: 700 }
+.heart-story-description em { font-style: italic }
+.heart-story-final { color: #56392F; font-weight: 700 !important }
+.heart-story-image-column { width: 100%; display: flex; align-items: center; justify-content: center }
+.heart-story-image-frame { width: 100%; max-width: 370px; aspect-ratio: 9 / 16; border-radius: 17px; overflow: hidden; background: #F3E2D9; box-shadow: 0 12px 35px rgba(86,57,47,0.10) }
+.heart-story-image-frame img { display: block; width: 100%; height: 100%; object-fit: contain }
+
+RESPONSIVE:
+@media screen and (max-width: 900px):
+  :root { padding: 42px 23px }
+  .heart-story-container { grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr) }
+  .heart-story-title { font-size: 29px }
+  .heart-story-description { font-size: 13px }
+@media screen and (max-width: 749px):
+  :root { padding: 35px 19px }
+  .heart-story-container { display: flex; flex-direction: column; gap: 28px; align-items: stretch }
+  .heart-story-content { max-width: 100% }
+  .heart-story-title { font-size: 29px; line-height: 1.23 }
+  .heart-story-description { font-size: 13.5px; line-height: 1.75 }
+  .heart-story-image-frame { width: min(100%, 360px); max-width: 360px; border-radius: 14px }
+
+YÊU CẦU KỸ THUẬT:
+- Không dùng thư viện ngoài; CSS và JS nằm gọn trong một khối, mọi class có prefix riêng như trên để không đụng CSS của theme.
+- Chỉ dùng Liquid chạy được trong khối Custom Liquid (không dùng section.settings, không cần {% schema %}).
+- Section phải hiển thị ngay khi dán code.
+
+TỰ KIỂM TRA trước khi trả lời: đối chiếu từng mục NỘI DUNG CHỮ và THÔNG SỐ GIAO DIỆN ở trên, không bỏ sót, không đổi chữ, không đổi màu.
+ĐỊNH DẠNG TRẢ VỀ: một khối code hoàn chỉnh để dán vào Custom Liquid, không giải thích dài.
+
+======================================================================
+3. 4-IMAGE SHOWCASE + LIGHTBOX
+======================================================================
+VAI TRÒ: Bạn là lập trình viên Shopify chuyên Custom Liquid và JavaScript thuần.
+BỐI CẢNH: [BỐI CẢNH CHUNG]
+NHIỆM VỤ: Viết section 4 ảnh phong cách sản phẩm, bấm ảnh để xem toàn màn hình.
+
+BỐ CỤC & HÀNH VI:
+- 4 thẻ ảnh cùng hàng; mỗi thẻ: ảnh phủ kín, lớp phủ gradient tối ở đáy chứa nhãn nhỏ viết hoa + tiêu đề serif trắng, nút ⤢ ở góc.
+- Lightbox: nền tối phủ toàn màn hình, ảnh lớn ở giữa, nút ✕ góc trên phải, nút ❮ ❯ hai bên, bộ đếm "1 / 4" và chú thích theo tiêu đề thẻ.
+- ID gallery ghép: 'heart-gallery-' | append: section.id | append: '-' | append: block.id.
+
+NỘI DUNG CHỮ (dùng NGUYÊN VĂN, đúng thứ tự xuất hiện):
+- THE LITTLE DETAILS
+- A Sweet Unboxing
+- ⤢
+- EVERYDAY ELEGANCE
+- Made to Be Worn
+- ⤢
+- A PERSONAL TOUCH
+- Your Letter, Your Story
+- ⤢
+- SIMPLE & BEAUTIFUL
+- A Little Heart, Every Day
+- ⤢
+- ✕
+- ❮
+- ❯
+
+ẢNH / VIDEO (dùng đúng URL):
+- https://cdn.shopify.com/s/files/1/0831/2465/0230/files/nh_ChatGPT_11_14_50_11_thg_11_2026.png?v=1794370539
+- https://cdn.shopify.com/s/files/1/0831/2465/0230/files/nh_ChatGPT_11_14_33_11_thg_11_2026.png?v=1794370538
+- https://cdn.shopify.com/s/files/1/0831/2465/0230/files/nh_ChatGPT_11_14_43_11_thg_11_2026.png?v=1794370538
+- https://cdn.shopify.com/s/files/1/0831/2465/0230/files/nh_ChatGPT_11_18_20_11_thg_11_2026.png?v=1794370752
+
+THÔNG SỐ GIAO DIỆN (dùng ĐÚNG tên class và giá trị dưới đây; được thêm thuộc tính phụ nếu cần):
+:root { width: 100%; padding: 35px 20px; background: #FFF7F3 }
+.heart-showcase-inner { max-width: 1400px; margin: 0 auto }
+.heart-showcase-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; width: 100% }
+.heart-showcase-card { position: relative; display: block; width: 100%; height: auto; aspect-ratio: 1 / 1; padding: 0; margin: 0; border: 1px solid #EADAD1; border-radius: 12px; overflow: hidden; background: #F5E8E1; text-align: left }
+.heart-showcase-card img { width: 100%; height: 100%; display: block; object-fit: cover }
+.heart-showcase-card:hover { box-shadow: 0 12px 24px rgba(86, 57, 47, 0.12) }
+.heart-showcase-overlay { position: absolute; width: 100%; padding: 34px 16px 15px; color: #FFFFFF; background: linear-gradient( to top, rgba(53, 33, 27, 0.78) 0%, rgba(53, 33, 27, 0.30) 58%, transparent 100% ) }
+.heart-showcase-tag { display: block; font-size: 9px; letter-spacing: 1.4px; font-weight: 700; text-transform: uppercase; color: #F3D5BC; line-height: 1.3 }
+.heart-showcase-overlay h3 { margin: 0; padding: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(14px, 1.5vw, 21px); line-height: 1.25; font-weight: 700; color: #FFFFFF }
+.heart-zoom-icon { position: absolute; width: 32px; height: 32px; border-radius: 50%; display: flex; justify-content: center; align-items: center; background: rgba(255,255,255,0.9); color: #56392F; font-size: 20px; opacity: 0 }
+.heart-showcase-card:hover .heart-zoom-icon, .heart-showcase-card:focus-visible .heart-zoom-icon { opacity: 1 }
+.heart-lightbox { position: fixed; width: 100%; max-width: none; height: 100%; max-height: none; margin: auto; padding: 16px; border: none; border-radius: 0; background: rgba(24, 16, 21, 0.95); color: #FFFFFF; overflow: hidden }
+.heart-lightbox[open] { display: flex; align-items: center; justify-content: center; gap: 10px }
+.heart-lightbox::backdrop { background: rgba(0,0,0,0.82) }
+.heart-lightbox-content { max-width: min(850px, 85vw); width: 100%; max-height: 94vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; min-width: 0 }
+.heart-lightbox-image { display: block; width: auto; max-width: 100%; height: auto; max-height: 78vh; object-fit: contain; border-radius: 10px; box-shadow: 0 16px 50px rgba(0,0,0,0.25) }
+.heart-lightbox-caption { font-family: Georgia, "Times New Roman", serif; color: #F9EEE8; font-size: 17px; text-align: center; line-height: 1.4 }
+.heart-lightbox-counter { color: #D0BEB6; font-size: 12px; letter-spacing: 1px }
+.heart-lightbox-close { position: absolute; width: 42px; height: 42px; border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; background: rgba(255,255,255,0.13); color: #FFFFFF; font-size: 20px; display: flex; align-items: center; justify-content: center }
+.heart-lightbox-prev, .heart-lightbox-next { width: 44px; height: 44px; border: 1px solid rgba(255,255,255,0.25); border-radius: 50%; background: rgba(255,255,255,0.12); color: #FFFFFF; font-size: 22px; display: flex; align-items: center; justify-content: center }
+.heart-lightbox-prev:hover, .heart-lightbox-next:hover, .heart-lightbox-close:hover { background: #B47E70 }
+
+RESPONSIVE:
+@media screen and (max-width: 989px):
+  :root { padding: 25px 14px }
+  .heart-showcase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px }
+  .heart-showcase-overlay h3 { font-size: 17px }
+@media screen and (max-width: 749px):
+  :root { padding: 20px 10px }
+  .heart-showcase-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px }
+  .heart-showcase-card { border-radius: 9px; aspect-ratio: 1 / 1.1 }
+  .heart-showcase-overlay { padding: 30px 10px 11px }
+  .heart-showcase-tag { font-size: 7.5px; letter-spacing: 0.7px }
+  .heart-showcase-overlay h3 { font-size: 13px; line-height: 1.2 }
+  .heart-zoom-icon { width: 27px; height: 27px; font-size: 16px; opacity: 0.95 }
+  .heart-lightbox { padding: 8px }
+  .heart-lightbox-content { max-width: calc(100vw - 90px) }
+  .heart-lightbox-image { max-height: 68vh; border-radius: 7px }
+  .heart-lightbox-prev, .heart-lightbox-next { width: 34px; height: 34px; font-size: 18px }
+  .heart-lightbox-caption { font-size: 14px }
+
+YÊU CẦU KỸ THUẬT:
+- JS trong IIFE, "use strict"; tìm gallery theo ID; gắn data-gallery-initialized="true" để không khởi tạo 2 lần.
+- Gom mảng ảnh từ các thẻ (src, alt, tiêu đề); mở lightbox tại ảnh được bấm, lưu phần tử đang focus để trả focus khi đóng.
+- Điều khiển: nút trước/sau (vòng lặp), phím ←/→, phím Escape, vuốt trái/phải (touchstart/touchend, ngưỡng ~50px), bấm nền tối để đóng; khoá cuộn trang khi mở.
+- Không dùng thư viện ngoài; CSS và JS nằm gọn trong một khối, mọi class có prefix riêng như trên để không đụng CSS của theme.
+- Chỉ dùng Liquid chạy được trong khối Custom Liquid (không dùng section.settings, không cần {% schema %}).
+- Section phải hiển thị ngay khi dán code.
+
+TỰ KIỂM TRA trước khi trả lời: đối chiếu từng mục NỘI DUNG CHỮ và THÔNG SỐ GIAO DIỆN ở trên, không bỏ sót, không đổi chữ, không đổi màu.
+ĐỊNH DẠNG TRẢ VỀ: một khối code hoàn chỉnh để dán vào Custom Liquid, không giải thích dài.
+
+======================================================================
+4. FOOTER
+======================================================================
+VAI TRÒ: Bạn là lập trình viên Shopify chuyên Custom Liquid.
+BỐI CẢNH: [BỐI CẢNH CHUNG]
+NHIỆM VỤ: Viết footer thương hiệu thay footer mặc định.
+
+BỐ CỤC & HÀNH VI:
+- Nền #FFF7F3; 3 cột: cột 1 icon trái tim trong vòng tròn viền #C39762 + khối chữ; cột 2 Quick Links; cột 3 newsletter.
+- Câu "Made to feel personal. ♡" in nghiêng serif màu #B47E70.
+- Newsletter: ô email viền #EAD7C9, nút "Sign Me Up ♡" full-width nền #B47E70; dòng chú thích nhỏ.
+- Hàng dưới: đường kẻ, icon phương thức thanh toán thật của shop (shop.enabled_payment_types | payment_type_svg_tag), dòng "© {{ 'now' | date: '%Y' }}, {{ shop.name }}. Made with ♡".
+
+NỘI DUNG CHỮ (dùng NGUYÊN VĂN, đúng thứ tự xuất hiện):
+- Little Details, Big Meaning ♡
+- A tiny heart. A letter that's all yours.
+- Discover delicate initial necklaces made for everyday styling, thoughtful gifting, and the little moments that mean the most.
+- Choose your favorite letter from A–Z in Gold or Silver, and make it uniquely yours.
+- Made to feel personal. ♡
+- Quick Links
+- Search
+- Privacy Policy
+- Refund Policy
+- Terms of Service
+- Shipping Policy
+- A Little Love in Your Inbox ♡
+- Be the first to hear about new arrivals, sweet little offers, and jewelry styling inspiration.
+- A little something special, delivered to your inbox.
+- Sign Me Up ♡
+- Thank you for joining!
+- So happy to have you here. ♡
+- Just sweet updates. Unsubscribe anytime.
+- © {{ 'now' | date: '%Y' }}, {{ shop.name }}. Made with ♡
+
+THÔNG SỐ GIAO DIỆN (dùng ĐÚNG tên class và giá trị dưới đây; được thêm thuộc tính phụ nếu cần):
+.heart-footer { background: var(--hf-bg); color: var(--hf-text); padding: 55px 24px 0; width: 100%; font-family: inherit }
+.heart-footer__inner { max-width: 1160px; margin: 0 auto }
+.heart-footer__top { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 0.75fr) minmax(0, 1fr); align-items: start }
+.heart-footer__brand { display: flex; align-items: flex-start; gap: 19px }
+.heart-footer__logo { width: 66px; height: 66px; display: flex; align-items: center; justify-content: center; border: 1.5px solid var(--hf-gold); border-radius: 50%; background: #FFFCF9; color: var(--hf-accent) }
+.heart-footer__logo svg { width: 33px; height: 33px }
+.heart-footer__brand-content { min-width: 0 }
+.heart-footer__brand-title { margin: 0 0 12px; font-family: Georgia, "Times New Roman", serif; font-size: 21px; line-height: 1.25; font-weight: 700; color: var(--hf-text) }
+.heart-footer__description { margin: 0; max-width: 320px; color: var(--hf-muted); font-size: 13px; font-weight: 400; line-height: 1.85 }
+.heart-footer__signature { display: block; color: var(--hf-accent); font-family: Georgia, "Times New Roman", serif; font-size: 13px; font-style: italic }
+.heart-footer__links h3, .heart-footer__newsletter h3 { margin: 0 0 20px; font-family: Georgia, "Times New Roman", serif; font-size: 21px; line-height: 1.3; font-weight: 700; color: var(--hf-text) }
+.heart-footer__links ul { padding: 0; margin: 0 }
+.heart-footer__links a { display: inline-block; color: var(--hf-muted); text-decoration: none; font-size: 13px; font-weight: 500; line-height: 1.55 }
+.heart-footer__links a:hover { color: var(--hf-accent); text-decoration: underline }
+.heart-footer__newsletter { width: 100%; max-width: 340px; margin: 0 }
+.heart-footer__newsletter-text { margin: 0 0 19px; color: var(--hf-muted); font-size: 13px; line-height: 1.8 }
+.heart-footer__form { width: 100%; margin: 0 }
+.heart-footer__input { display: block; width: 100%; height: 46px; padding: 0 15px; border: 1px solid #DCC8BD; border-radius: 7px; background: #FFFFFF; color: var(--hf-text); font-family: inherit; font-size: 13px; margin: 0 0 10px }
+.heart-footer__input::placeholder { color: #A18A80; opacity: 1 }
+.heart-footer__input:focus { box-shadow: 0 0 0 3px rgba(180,126,112,0.12) }
+.heart-footer__button { display: flex; align-items: center; justify-content: center; gap: 9px; width: 100%; min-height: 46px; padding: 11px 18px; border: none; border-radius: 7px; background: var(--hf-accent); color: #FFFFFF; font-family: inherit; font-size: 13px; font-weight: 800; letter-spacing: 0.3px }
+.heart-footer__button:hover { background: var(--hf-accent-hover) }
+.heart-footer__button-heart { font-size: 19px; line-height: 1; font-weight: 400 }
+.heart-footer__newsletter-note { margin: 12px 0 0; font-size: 11px; line-height: 1.65; color: #977E73 }
+.heart-footer__success { margin: 12px 0 0; padding: 11px 12px; background: #ECF5EB; border: 1px solid #C8E0C5; border-radius: 7px; color: #365E39; font-size: 12px; line-height: 1.5 }
+.heart-footer__error { margin: 12px 0 0; padding: 11px 12px; background: #FFF0EE; border: 1px solid #E6BBB5; border-radius: 7px; color: #A0443B; font-size: 12px; line-height: 1.5 }
+.heart-footer__bottom { border-top: 1px solid var(--hf-border); padding: 25px 0 20px; text-align: center }
+.heart-footer__payments { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 7px }
+.heart-footer__payments svg { display: block; width: 38px; height: auto; max-height: 27px }
+.heart-footer__copyright { margin: 0; font-size: 11px; line-height: 1.5; color: var(--hf-muted) }
+.heart-footer__copyright-heart { color: var(--hf-accent) }
+.heart-footer__top-btn { position: fixed; width: 42px; height: 42px; padding: 0; border: 1px solid rgba(255,255,255,0.7); border-radius: 50%; background: var(--hf-accent); color: #FFFFFF; display: flex; align-items: center; justify-content: center; box-shadow: 0 5px 17px rgba(86,57,47,0.19) }
+.heart-footer__top-btn svg { width: 21px; height: 21px }
+.heart-footer__top-btn:hover { background: var(--hf-accent-hover) }
+
+RESPONSIVE:
+@media screen and (max-width: 950px):
+  .heart-footer__top { grid-template-columns: 1fr 1fr; gap: 35px }
+  .heart-footer__newsletter { max-width: 430px }
+@media screen and (max-width: 640px):
+  .heart-footer { padding: 40px 20px 0 }
+  .heart-footer__top { grid-template-columns: 1fr; gap: 34px }
+  .heart-footer__brand { gap: 17px }
+  .heart-footer__logo { width: 58px; height: 58px }
+  .heart-footer__logo svg { width: 30px; height: 30px }
+  .heart-footer__brand-title { font-size: 19px }
+  .heart-footer__description { font-size: 12.5px; max-width: none }
+  .heart-footer__links h3, .heart-footer__newsletter h3 { font-size: 20px }
+  .heart-footer__newsletter { max-width: none }
+  .heart-footer__newsletter-text { font-size: 12.5px }
+  .heart-footer__bottom { padding: 23px 0 18px }
+  .heart-footer__top-btn { width: 39px; height: 39px }
+
+YÊU CẦU KỸ THUẬT:
+- Link chính sách lấy từ shop.privacy_policy.url, shop.refund_policy.url, shop.terms_of_service.url, shop.shipping_policy.url; Search → routes.search_url.
+- Newsletter dùng {% form 'customer' %} với input hidden contact[tags] = newsletter; form.posted_successfully? → hiện "Thank you for joining! / So happy to have you here. ♡"; lỗi hiện màu đỏ #A0443B.
+- Không dùng thư viện ngoài; CSS và JS nằm gọn trong một khối, mọi class có prefix riêng như trên để không đụng CSS của theme.
+- Chỉ dùng Liquid chạy được trong khối Custom Liquid (không dùng section.settings, không cần {% schema %}).
+- Section phải hiển thị ngay khi dán code.
+
+TỰ KIỂM TRA trước khi trả lời: đối chiếu từng mục NỘI DUNG CHỮ và THÔNG SỐ GIAO DIỆN ở trên, không bỏ sót, không đổi chữ, không đổi màu.
+ĐỊNH DẠNG TRẢ VỀ: một khối code hoàn chỉnh để dán vào Custom Liquid, không giải thích dài.
+
+######################################################################
+# TRANG SẢN PHẨM
+######################################################################
+
+======================================================================
+5. PRODUCT INFO (KHỐI LỢI ÍCH)
+======================================================================
+VAI TRÒ: Bạn là lập trình viên Shopify chuyên Custom Liquid.
+BỐI CẢNH: [BỐI CẢNH CHUNG]
+NHIỆM VỤ: Viết khối giới thiệu lợi ích đặt trong cột mua hàng của trang sản phẩm, dưới tiêu đề và giá.
+
+BỐ CỤC & HÀNH VI:
+- Câu trích dẫn in nghiêng ở đầu.
+- 4 dòng lợi ích dạng lưới 2 cột (icon emoji 24px | chữ), tiêu đề lợi ích in đậm 800, theo sau là dấu – và mô tả.
+- Dòng CTA cuối: vòng tròn 32px nền #F9E8E3 chứa trái tim SVG 16px màu #C98D85 nhấp nháy (animation 1.4s lặp vô hạn) + chữ in đậm.
+
+NỘI DUNG CHỮ (dùng NGUYÊN VĂN, đúng thứ tự xuất hiện):
+- "A little heart. A letter that's all yours."
+- 💖
+- Made Personal
+- – Wear your initial or someone special's.
+- ✨
+- Simple & Elegant
+- – A delicate touch for everyday outfits.
+- 🔤
+- Choose Your Letter
+- – Available in A–Z, Gold or Silver.
+- 🎁
+- A Meaningful Gift
+- – A sweet surprise for someone you love.
+- Pick Your Initial & Make It Yours Today!
+
+THÔNG SỐ GIAO DIỆN (dùng ĐÚNG tên class và giá trị dưới đây; được thêm thuộc tính phụ nếu cần):
+.heartinitial-info { width: 100%; max-width: 440px; font-family: inherit; color: #000000; margin: 0; padding: 16px 0 0 }
+.heartinitial-info__intro { font-size: 17px; font-style: italic; font-weight: 400; line-height: 1.4; color: #000000; margin: 0 0 20px }
+.heartinitial-info__list { display: flex; flex-direction: column; gap: 16px; width: 100% }
+.heartinitial-info__item { display: grid; grid-template-columns: 24px minmax(0, 1fr); align-items: start; width: 100%; font-size: 17px; font-weight: 400; line-height: 1.35; color: #000000 }
+.heartinitial-info__icon { display: flex; align-items: center; justify-content: center; width: 24px; height: 24px; font-size: 18px; line-height: 1 }
+.heartinitial-info__text { color: #000000; min-width: 0; width: 100%; white-space: normal }
+.heartinitial-info__text strong { font-weight: 800; color: #000000 }
+.heartinitial-info__highlight { display: flex; align-items: center; gap: 9px; width: 100%; font-size: 15px; font-weight: 800; line-height: 1.4; color: #000000 }
+.heartinitial-info__cta-text { color: #000000; min-width: 0; white-space: normal }
+.heartinitial-info__circle { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #f9e8e3; padding: 0; margin: 0; position: relative }
+.heartinitial-info__heart { position: absolute; display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #c98d85; animation: heartinitial-pulse 1.4s ease-in-out infinite }
+.heartinitial-info__heart svg { display: block; width: 16px; height: 16px }
+Animation: @keyframes heartinitial-pulse
+
+RESPONSIVE:
+@media screen and (max-width: 749px):
+  .heartinitial-info { width: 100%; max-width: 440px }
+  .heartinitial-info__intro { font-size: 16px }
+  .heartinitial-info__list { gap: 15px }
+  .heartinitial-info__item { font-size: 15.5px; line-height: 1.35; grid-template-columns: 23px minmax(0, 1fr) }
+  .heartinitial-info__icon { width: 23px; height: 23px; font-size: 17px }
+  .heartinitial-info__highlight { font-size: 14px; gap: 9px }
+@media (prefers-reduced-motion: reduce):
+  .heartinitial-info__heart { animation: none }
+
+YÊU CẦU KỸ THUẬT:
+- Không dùng thư viện ngoài; CSS và JS nằm gọn trong một khối, mọi class có prefix riêng như trên để không đụng CSS của theme.
+- Chỉ dùng Liquid chạy được trong khối Custom Liquid (không dùng section.settings, không cần {% schema %}).
+- Section phải hiển thị ngay khi dán code.
+
+TỰ KIỂM TRA trước khi trả lời: đối chiếu từng mục NỘI DUNG CHỮ và THÔNG SỐ GIAO DIỆN ở trên, không bỏ sót, không đổi chữ, không đổi màu.
+ĐỊNH DẠNG TRẢ VỀ: một khối code hoàn chỉnh để dán vào Custom Liquid, không giải thích dài.
+
+======================================================================
+6. BUNDLE SELECTOR (SINGLE / BUY 2 GET 1 FREE)
+======================================================================
+VAI TRÒ: Bạn là lập trình viên Shopify chuyên Custom Liquid, AJAX Cart API và JavaScript thuần.
+BỐI CẢNH: [BỐI CẢNH CHUNG]
+NHIỆM VỤ: Viết bộ chọn gói và chọn chữ/màu, đặt ngay trên nút ADD TO CART gốc của theme.
+
+BỐ CỤC & HÀNH VI:
+- STEP 1: 2 thẻ gói cạnh nhau. Thẻ SINGLE NECKLACE có nhãn STANDARD, giá = giá biến thể mặc định ({{ bn_default.price | money }}). Thẻ BUY 2, GET 1 FREE có nhãn BEST VALUE ★, giá = 2 × giá. Thẻ đang chọn viền #C7947B nền hồng nhạt.
+- STEP 2: tab NECKLACE 1 / NECKLACE 2 / FREE GIFT 🎁 (chỉ hiện khi chọn gói 3); lưới 26 ô chữ A–Z (7 cột); 2 nút màu Gold/Silver có chấm tròn màu.
+- Thông báo lỗi chữ đỏ #AF3030 khi chưa chọn đủ; không dùng alert().
+
+NỘI DUNG CHỮ (dùng NGUYÊN VĂN, đúng thứ tự xuất hiện):
+- STEP 1 — CHOOSE YOUR PACKAGE
+- STANDARD
+- SINGLE NECKLACE
+- ✓ 1 personalized necklace
+- ✓ Choose letter & color
+- BEST VALUE ★
+- BUY 2, GET 1 FREE
+- ✓ 3 personalized necklaces
+- ✓ Choose each letter & color
+- 🎁 1 necklace FREE
+- STEP 2 — CHOOSE YOUR INITIAL & COLOR
+- NECKLACE 1
+- NECKLACE 2
+- FREE GIFT 🎁
+- Initial (A–Z)
+- Color
+
+THÔNG SỐ GIAO DIỆN (dùng ĐÚNG tên class và giá trị dưới đây; được thêm thuộc tính phụ nếu cần):
+#shopify-section- variant-selects, #shopify-section- variant-picker, #shopify-section- .product-form__input--pills, #shopify-section- .product-form__input--dropdown, #shopify-section- .product-form__input--swatches { position: absolute !important; width: 1px !important; height: 1px !important; opacity: 0 !important; overflow: hidden !important; margin: 0 !important; padding: 0 !important }
+#shopify-section-.bn-trio-mode .shopify-payment-button, #shopify-section-.bn-trio-mode shopify-accelerated-checkout { display: none !important }
+:root { width: 100%; max-width: 440px; margin: 18px 0 20px; color: #000000; font-family: inherit }
+.bn-step { margin: 0 0 15px; color: #000000; font-size: 12px; font-weight: 850; letter-spacing: 0.09em; text-transform: uppercase }
+.bn-plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px }
+button { font-family: inherit }
+.bn-plan { position: relative; display: flex; flex-direction: column; align-items: flex-start; min-width: 0; min-height: 144px; padding: 21px 11px 13px; border: 1.5px solid var(--bn-border); border-radius: 13px; background: #ffffff; color: #000000; text-align: left }
+.bn-plan.is-selected { border: 2px solid var(--bn-accent); background: var(--bn-selected) }
+.bn-badge { position: absolute; background: #a46f59; color: #ffffff; padding: 4px 11px; border-radius: 20px; font-size: 9px; font-weight: 850; letter-spacing: 0.06em; white-space: nowrap }
+.bn-badge.gold { background: #b18732 }
+.bn-name { color: #000000; font-size: 12px; font-weight: 850; line-height: 1.3 }
+.bn-price { display: block; margin: 7px 0 6px; color: #56392f; font-size: 26px; font-weight: 900; line-height: 1.2 }
+.bn-desc { display: block; color: #000000; font-size: 11px; font-weight: 600; line-height: 1.6 }
+.bn-free { color: #8c6338; font-size: 11px; font-weight: 850 }
+.bn-divider { border: 0; border-top: 1px solid var(--bn-border); margin: 22px 0 20px }
+.bn-tabs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 7px }
+.bn-tabs[hidden] { display: none !important }
+.bn-tab { min-width: 0; padding: 9px 4px; border: 1.5px solid var(--bn-border); border-radius: 8px; background: #ffffff; color: #000000; text-align: center; font-size: 11px; font-weight: 800 }
+.bn-tab.is-selected { background: var(--bn-selected) }
+.bn-tab small { display: block; color: #000000; font-size: 10px; font-weight: 500 }
+.bn-label { color: #000000; font-size: 12px; font-weight: 800; margin: 0 0 9px }
+.bn-letters { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 6px }
+.bn-letter { width: 100%; min-width: 0; aspect-ratio: 1 / 1; border: 1.5px solid var(--bn-border); border-radius: 7px; background: #ffffff; color: #000000; font-size: 13px; font-weight: 800 }
+.bn-letter.is-selected { border: 2px solid var(--bn-accent); background: var(--bn-selected) }
+.bn-colors { display: flex; gap: 9px; flex-wrap: wrap }
+.bn-color { display: inline-flex; align-items: center; gap: 7px; padding: 8px 13px; border: 1.5px solid #d8c9c0; border-radius: 7px; background: #ffffff; color: #000000; font-size: 13px; font-weight: 750 }
+.bn-color.is-selected { border: 2px solid var(--bn-accent); background: var(--bn-selected) }
+.bn-dot { width: 16px; height: 16px; border-radius: 50%; border: 1px solid #0002; background: linear-gradient( 135deg, #fff1ba, #c19044 ) }
+.bn-dot.silver { background: linear-gradient( 135deg, #ffffff, #a4a8ae ) }
+button:disabled { opacity: 0.35 }
+.bn-error { margin: 10px 0 0; color: #af3030; font-size: 12px; line-height: 1.5 }
+.bn-error:empty { display: none }
+
+RESPONSIVE:
+@media screen and (max-width: 749px):
+  .bn-plan { padding: 20px 9px 12px; min-height: 142px }
+  .bn-price { font-size: 24px }
+  .bn-letters { gap: 6px }
+
+YÊU CẦU KỸ THUẬT:
+- Dựng bảng biến thể từ {{ product.variants | json }}: option1 = chữ, option2 = màu → variant id thật.
+- Gói 1: cập nhật input name="id" của form sản phẩm gốc theo lựa chọn, giữ nút ADD TO CART và Shop Pay gốc.
+- Gói 3: chặn submit form gốc, gửi 3 dòng qua fetch('/cart/add.js') với items:[{id,quantity:1}×3], sau đó chuyển tới /cart; ẩn nút Shop Pay (.shopify-payment-button) khi đang chọn gói 3.
+- Ghi chú trong code: cần tạo discount tự động Buy X Get Y trong Shopify; code giao diện không tự tạo ưu đãi.
+- Không dùng thư viện ngoài; CSS và JS nằm gọn trong một khối, mọi class có prefix riêng như trên để không đụng CSS của theme.
+- Chỉ dùng Liquid chạy được trong khối Custom Liquid (không dùng section.settings, không cần {% schema %}).
+- Section phải hiển thị ngay khi dán code.
+
+TỰ KIỂM TRA trước khi trả lời: đối chiếu từng mục NỘI DUNG CHỮ và THÔNG SỐ GIAO DIỆN ở trên, không bỏ sót, không đổi chữ, không đổi màu.
+ĐỊNH DẠNG TRẢ VỀ: một khối code hoàn chỉnh để dán vào Custom Liquid, không giải thích dài.
+
+======================================================================
+7. GUARANTEE BADGE (30 NGÀY)
+======================================================================
+VAI TRÒ: Bạn là lập trình viên Shopify và thiết kế icon SVG.
+BỐI CẢNH: [BỐI CẢNH CHUNG]
+NHIỆM VỤ: Viết hộp cam kết hoàn tiền đặt dưới nút mua.
+
+BỐ CỤC & HÀNH VI:
+- Hộp ngang: huy hiệu SVG 48px bên trái, nội dung bên phải.
+- Huy hiệu SVG viewBox 0 0 100 100: ngôi sao răng cưa 24 cánh màu #C99578 viền #A8745B; vòng tròn trong r=34 viền #FFF8F1; chữ "30" lớn, "DAY", "GUARANTEE" màu trắng.
+
+NỘI DUNG CHỮ (dùng NGUYÊN VĂN, đúng thứ tự xuất hiện):
+- 30-Day Money-Back Guarantee
+- Not completely satisfied with your necklace?
+- Contact us within 30 days of delivery.
+- We'll help arrange an eligible return, replacement, or refund according to our return policy.
+
+THÔNG SỐ GIAO DIỆN (dùng ĐÚNG tên class và giá trị dưới đây; được thêm thuộc tính phụ nếu cần):
+.heart-guarantee { width: 100%; max-width: 100%; display: flex; align-items: center; gap: 14px; background: #FFF7F2; border: 1px solid #EAD7C9; border-radius: 9px; padding: 15px 16px; margin: 0; font-family: inherit; color: #000000; box-shadow: 0 2px 8px rgba(151, 103, 76, 0.05) }
+.heart-guarantee-icon { width: 48px; height: 48px; display: flex; align-items: center; justify-content: center }
+.heart-guarantee-icon svg { width: 100%; height: 100%; display: block }
+.heart-guarantee-content { min-width: 0 }
+.heart-guarantee-title { font-size: 15px; font-weight: 800; color: #56392F; margin: 0 0 5px; line-height: 1.3; letter-spacing: 0 }
+.heart-guarantee-description { font-size: 13px; font-weight: 500; line-height: 1.5; color: #000000; margin: 0; letter-spacing: 0 }
+
+RESPONSIVE:
+@media screen and (max-width: 749px):
+  .heart-guarantee { padding: 13px 12px; gap: 11px; border-radius: 8px; align-items: center }
+  .heart-guarantee-icon { width: 43px; height: 43px }
+  .heart-guarantee-title { font-size: 13.5px }
+  .heart-guarantee-description { font-size: 12px; line-height: 1.45 }
+
+YÊU CẦU KỸ THUẬT:
+- Không dùng thư viện ngoài; CSS và JS nằm gọn trong một khối, mọi class có prefix riêng như trên để không đụng CSS của theme.
+- Chỉ dùng Liquid chạy được trong khối Custom Liquid (không dùng section.settings, không cần {% schema %}).
+- Section phải hiển thị ngay khi dán code.
+
+TỰ KIỂM TRA trước khi trả lời: đối chiếu từng mục NỘI DUNG CHỮ và THÔNG SỐ GIAO DIỆN ở trên, không bỏ sót, không đổi chữ, không đổi màu.
+ĐỊNH DẠNG TRẢ VỀ: một khối code hoàn chỉnh để dán vào Custom Liquid, không giải thích dài.
+
+======================================================================
+8. SEE IT IN ACTION (VIDEO)
+======================================================================
+VAI TRÒ: Bạn là lập trình viên Shopify chuyên Custom Liquid và JavaScript thuần.
+BỐI CẢNH: [BỐI CẢNH CHUNG]
+NHIỆM VỤ: Viết carousel 3 video dọc cho trang sản phẩm.
+
+BỐ CỤC & HÀNH VI:
+- Tiêu đề "See it in action" màu cam gradient (#EA7317 → #F5A94A), dưới là nhãn bo tròn viền cam có icon trái tim hồng #E1306C và chữ "Always a theme you'll love".
+- Hàng video cuộn ngang (scroll-snap-type: x mandatory), mỗi thẻ khung dọc bo góc, video autoplay muted loop playsinline, nút Play/Pause tròn góc dưới trái.
+- Dưới hàng video là thanh tiến trình kéo được (draggable progress bar) đồng bộ với vị trí cuộn.
+
+NỘI DUNG CHỮ (dùng NGUYÊN VĂN, đúng thứ tự xuất hiện):
+- See it in action
+- Always a theme you'll love
+
+ẢNH / VIDEO (dùng đúng URL):
+- https://cdn.shopify.com/videos/c/o/v/556461c44e7e49ccb0e29ef2e3f848bf.mp4
+- https://cdn.shopify.com/videos/c/o/v/3cb1f8b75b4a4d90980cad424d8afd69.mp4
+- https://cdn.shopify.com/videos/c/o/v/9b794b15937544d1b442a074522ec00a.mp4
+
+THÔNG SỐ GIAO DIỆN (dùng ĐÚNG tên class và giá trị dưới đây; được thêm thuộc tính phụ nếu cần):
+.siia-wrap { max-width: 900px; width: 100%; padding: 20px 0 }
+.siia-title { font-size: 28px; font-weight: 800; color: var(--highlight); margin: 0 0 12px; line-height: 1.2 }
+.siia-badge { display: inline-flex; align-items: center; gap: 8px; border: 1px solid var(--highlight); border-radius: 999px; padding: 8px 16px; font-size: 13px; color: var(--text); background: #fff }
+.siia-scroll { display: flex; gap: 10px; scroll-snap-type: x mandatory }
+.siia-scroll::-webkit-scrollbar { display: none }
+.siia-item { position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 3 / 4; background: #000 }
+.siia-video { width: 100%; height: 100%; object-fit: cover; display: block }
+.siia-play { position: absolute; width: 30px; height: 30px; border: none; padding: 0; border-radius: 50%; background: rgba(0, 0, 0, 0.5); display: flex; align-items: center; justify-content: center }
+.siia-play:hover { background: rgba(0, 0, 0, 0.8) }
+.siia-play svg { display: block }
+.siia-icon-pause { display: none !important }
+.siia-play.is-playing .siia-icon-play { display: none !important }
+.siia-play.is-playing .siia-icon-pause { display: block !important }
+.siia-progress-track { position: relative; width: 100%; height: 8px; background: #FDE8CF; border-radius: 999px }
+.siia-progress-fill { position: absolute; height: 100%; width: 0%; background: linear-gradient( 90deg, var(--highlight), var(--highlight-dark) ); border-radius: 999px }
+.siia-progress-handle { position: absolute; width: 22px; height: 22px; background: var(--highlight-dark); border: 3px solid #fff; border-radius: 50%; box-shadow: 0 2px 8px rgba(234, 115, 23, 0.5) }
+.siia-no-scroll .siia-progress-track { display: none }
+
+RESPONSIVE:
+@media (max-width: 480px):
+  .siia-wrap { padding: 15px 0 }
+  .siia-title { font-size: 22px }
+  .siia-item { border-radius: 12px }
+  .siia-scroll { gap: 10px }
+  .siia-progress-track { height: 9px }
+  .siia-progress-handle { width: 24px; height: 24px }
+
+YÊU CẦU KỸ THUẬT:
+- Nút Play/Pause đổi icon theo trạng thái video.
+- Kéo thanh tiến trình → cuộn danh sách tương ứng; cuộn danh sách → cập nhật thanh.
+- Phím ←/→ chuyển video khi danh sách đang focus.
+- Không dùng thư viện ngoài; CSS và JS nằm gọn trong một khối, mọi class có prefix riêng như trên để không đụng CSS của theme.
+- Chỉ dùng Liquid chạy được trong khối Custom Liquid (không dùng section.settings, không cần {% schema %}).
+- Section phải hiển thị ngay khi dán code.
+
+TỰ KIỂM TRA trước khi trả lời: đối chiếu từng mục NỘI DUNG CHỮ và THÔNG SỐ GIAO DIỆN ở trên, không bỏ sót, không đổi chữ, không đổi màu.
+ĐỊNH DẠNG TRẢ VỀ: một khối code hoàn chỉnh để dán vào Custom Liquid, không giải thích dài.
+
+======================================================================
+9. CUSTOMER REVIEWS
+======================================================================
+VAI TRÒ: Bạn là lập trình viên Shopify chuyên Liquid, metafield và JavaScript thuần.
+BỐI CẢNH: [BỐI CẢNH CHUNG]
+NHIỆM VỤ: Viết widget đánh giá khách hàng cho trang sản phẩm.
+
+BỐ CỤC & HÀNH VI:
+- Tiêu đề "Customer Reviews" căn giữa; dưới là điểm trung bình lớn + sao + "Based on N reviews" + nút "Write A Review" bo tròn nền #B47E70.
+- Thanh công cụ một hàng: ô "Search reviews", select All ratings/5→1 stars, ô tích "With media", "Sort by:" (Highest rating, Lowest rating, Most recent, Most helpful).
+- Mỗi review: avatar tròn chữ cái đầu nền #F8EAE3, tên, sao + tiêu đề in đậm, ngày bên phải (dd/mm/yyyy), nội dung, "Read more" khi dài, ảnh thumbnail bo góc nếu có, "Was this review helpful? 👍 n 👎 n".
+- Phân trang dạng nút tròn: ‹ 1 2 … 4 ›, trang hiện tại nền #B47E70; 5 review mỗi trang.
+
+NỘI DUNG CHỮ (dùng NGUYÊN VĂN, đúng thứ tự xuất hiện):
+- Customer Reviews
+- No reviews yet
+- Write A Review
+- Write a review
+- Thank you! Your message has been sent.
+- Your rating
+- Select rating stars
+- Name
+- Email
+- Review title
+- Your review
+- Cancel
+- Submit Review
+- All ratings
+- ★ stars
+- With media
+- Sort by:
+- Highest rating
+- Lowest rating
+- Most recent
+- Most helpful
+- No matching reviews found.
+
+ẢNH / VIDEO (dùng đúng URL):
+- https://cdn.shopify.com/s/files/1/0831/2465/0230/files/nh_ChatGPT_11_14_24_11_thg_11_2026.png?v=1794370541
+- https://cdn.shopify.com/s/files/1/0831/2465/0230/files/nh_ChatGPT_11_17_54_11_thg_11_2026.png?v=1794370752
+- https://cdn.shopify.com/s/files/1/0831/2465/0230/files/nh_ChatGPT_11_14_33_11_thg_11_2026.png?v=1794370538
+
+THÔNG SỐ GIAO DIỆN (dùng ĐÚNG tên class và giá trị dưới đây; được thêm thuộc tính phụ nếu cần):
+.lvr { max-width: 1200px; margin: auto; padding: 30px 16px; color: #56392F }
+.lvr > h3, .lvr [data-empty] { text-align: center }
+.lvr header, .lvr nav, .lvr .pages { display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap; margin: 20px 0 }
+.lvr header b { font-size: 26px }
+.lvr .stars, .lvr [data-stars] { color: #C39762 }
+.lvr button:disabled { opacity: .4 }
+.lvr [data-open], .lvr .actions button:last-child, .lvr .pages .active { background: #B47E70; color: #fff; border: 0; border-radius: 20px; padding: 9px 14px }
+.lvr .tools > * { border: 1px solid #EAD7C9; border-radius: 25px; padding: 8px 12px }
+.lvr .tools label { display: flex; align-items: center; gap: 8px }
+.lvr .item { display: flex; gap: 14px; padding: 18px 0; border-top: 1px solid #EAD7C9 }
+.lvr .avatar { height: 40px; border-radius: 50%; background: #F8EAE3; text-align: center; line-height: 40px }
+.lvr .body { min-width: 0 }
+.lvr .top { display: flex; justify-content: space-between; gap: 12px }
+.lvr .cut { display: -webkit-box; overflow: hidden }
+.lvr .more, .lvr .help button { border: 0; background: none; color: #B47E70; padding: 5px }
+.lvr .photos { display: flex; flex-wrap: wrap; gap: 8px; margin: 10px 0 }
+.lvr .photos img { width: 68px; height: 68px; object-fit: cover; border-radius: 8px }
+.lvr [hidden] { display: none !important }
+.lvr .rf { max-width: 500px; margin: auto; padding: 18px; background: #FFF7F3 }
+.lvr .rf label { display: block; margin: 12px 0 }
+.lvr .rf input, .lvr .rf textarea, .lvr .rf select { display: block; width: 100%; padding: 9px; border: 1px solid #EAD7C9; border-radius: 6px; background: white }
+.lvr .actions { display: flex; justify-content: flex-end; gap: 12px }
+.lvr .pages button { min-width: 34px; padding: 6px 10px; border: 1px solid #EAD7C9; border-radius: 6px }
+
+RESPONSIVE:
+@media (max-width: 700px):
+  .lvr .tools { flex-direction: column; align-items: stretch }
+  .lvr .tools > input { width: 100% }
+  .lvr .top { flex-direction: column; gap: 4px }
+
+YÊU CẦU KỸ THUẬT:
+- Dữ liệu: product.metafields.custom.customer_reviews (JSON mảng: name, rating, title, body, date, images[], helpful). Không có dữ liệu → "No reviews yet" và "—".
+- Lọc, tìm, sắp xếp, phân trang làm phía trình duyệt; nút Helpful chỉ tăng bộ đếm trên trình duyệt.
+- Form "Write a review" (ẩn, mở bằng nút) dùng {% form 'contact', id: 'LuvettaReviewForm' %}: chọn sao, Name, Email, Review title, Your review, nút Cancel / Submit Review; sau khi gửi hiện "Thank you! Your message has been sent."
+- Không dùng thư viện ngoài; CSS và JS nằm gọn trong một khối, mọi class có prefix riêng như trên để không đụng CSS của theme.
+- Chỉ dùng Liquid chạy được trong khối Custom Liquid (không dùng section.settings, không cần {% schema %}).
+- Section phải hiển thị ngay khi dán code.
+
+TỰ KIỂM TRA trước khi trả lời: đối chiếu từng mục NỘI DUNG CHỮ và THÔNG SỐ GIAO DIỆN ở trên, không bỏ sót, không đổi chữ, không đổi màu.
+ĐỊNH DẠNG TRẢ VỀ: một khối code hoàn chỉnh để dán vào Custom Liquid, không giải thích dài.
+
+======================================================================
+10. GUARANTEE + ADD TO CART
+======================================================================
+VAI TRÒ: Bạn là lập trình viên Shopify chuyên Custom Liquid.
+BỐI CẢNH: [BỐI CẢNH CHUNG]
+NHIỆM VỤ: Viết khối cam kết 30 ngày cuối trang sản phẩm, có nút thêm vào giỏ.
+
+BỐ CỤC & HÀNH VI:
+- Section nền #FFF7F3, nội dung căn giữa, rộng tối đa ~680px.
+- Icon khiên có dấu ✓ viền vàng #C39762 trong vòng tròn.
+- Tiêu đề serif lớn: "30-Day Money-Back" màu #B47E70 + "Guarantee" màu #56392F.
+- Đoạn mô tả, nút ADD TO CART ♡ bo tròn full-pill nền #B47E70 chữ trắng, hàng 3 điểm tin cậy có dấu ✓ vàng, câu kết nhỏ, link "View our refund policy" gạch chân.
+
+NỘI DUNG CHỮ (dùng NGUYÊN VĂN, đúng thứ tự xuất hiện):
+- 30-Day Money-Back
+- Guarantee
+- Your little heart deserves a little peace of mind.
+- Choose your favorite initial, wear it your way, and fall in love with your new everyday necklace.
+- If something isn't right, contact us within 30 days of delivery for help with an eligible return or refund under our return policy.
+- ADD TO CART ♡
+- ✓
+- 30-Day Guarantee
+- ✓
+- Secure Checkout
+- ✓
+- Easy Gift Giving
+- Because the little things mean the most. ♡
+- View our refund policy
+
+THÔNG SỐ GIAO DIỆN (dùng ĐÚNG tên class và giá trị dưới đây; được thêm thuộc tính phụ nếu cần):
+:root { width: 100%; background: var(--heart-bg); padding: 58px 22px 55px; text-align: center }
+.heart-guarantee-inner { max-width: 850px; margin: 0 auto }
+.heart-guarantee-icon { width: 56px; height: 56px; margin: 0 auto 24px; border: 1.5px solid var(--heart-gold); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--heart-gold); background: #FFFDFB }
+.heart-guarantee-title { margin: 0 0 19px; line-height: 1.24; font-size: clamp(28px, 4vw, 40px); font-weight: 800; letter-spacing: -0.8px; color: var(--heart-brown) }
+.heart-guarantee-title span { color: var(--heart-rose); font-weight: 800 }
+.heart-guarantee-title strong { color: var(--heart-brown); font-weight: 800 }
+.heart-guarantee-description { max-width: 670px; margin: 0 auto 29px; color: var(--heart-brown); font-size: 15px; font-weight: 400; line-height: 1.85 }
+.heart-guarantee-button { width: 100%; max-width: 540px; min-height: 56px; margin: 0 auto; display: flex; justify-content: center; align-items: center; gap: 12px; border: none; border-radius: 999px; background: var(--heart-rose); color: #FFFFFF; font-family: inherit; font-size: 15px; font-weight: 800; letter-spacing: 0.5px }
+.heart-guarantee-button:hover { background: var(--heart-rose-hover); box-shadow: 0 7px 20px rgba(136, 88, 73, 0.17) }
+.heart-guarantee-button span { font-size: 21px; font-weight: 400; line-height: 1 }
+.heart-guarantee-features { display: flex; justify-content: center; align-items: center; flex-wrap: wrap }
+.heart-guarantee-feature { display: flex; align-items: center; justify-content: center; gap: 8px; color: var(--heart-brown); font-size: 13px; font-weight: 700 }
+.heart-check { color: var(--heart-gold); font-size: 19px; font-weight: 800; line-height: 1 }
+.heart-guarantee-footer { margin: 22px 0 0; font-size: 12px; color: var(--heart-muted); font-weight: 500 }
+.heart-guarantee-policy { display: inline-block; color: var(--heart-muted); font-size: 11px; text-decoration: underline }
+.heart-guarantee-status { margin: 12px auto 0; max-width: 520px; color: var(--heart-brown); font-size: 12px }
+
+RESPONSIVE:
+@media screen and (max-width: 749px):
+  :root { padding: 43px 18px 40px }
+  .heart-guarantee-icon { width: 50px; height: 50px }
+  .heart-guarantee-title { font-size: 28px; line-height: 1.3; letter-spacing: -0.5px }
+  .heart-guarantee-title span, .heart-guarantee-title strong { display: block }
+  .heart-guarantee-description { font-size: 13.5px; line-height: 1.8 }
+  .heart-guarantee-button { min-height: 54px; font-size: 14px }
+  .heart-guarantee-feature { font-size: 11.5px }
+
+YÊU CẦU KỸ THUẬT:
+- Nút gửi form /cart/add với variant đang chọn ({{ product.selected_or_first_available_variant.id }}), quantity 1.
+- Không dùng thư viện ngoài; CSS và JS nằm gọn trong một khối, mọi class có prefix riêng như trên để không đụng CSS của theme.
+- Chỉ dùng Liquid chạy được trong khối Custom Liquid (không dùng section.settings, không cần {% schema %}).
+- Section phải hiển thị ngay khi dán code.
+
+TỰ KIỂM TRA trước khi trả lời: đối chiếu từng mục NỘI DUNG CHỮ và THÔNG SỐ GIAO DIỆN ở trên, không bỏ sót, không đổi chữ, không đổi màu.
+ĐỊNH DẠNG TRẢ VỀ: một khối code hoàn chỉnh để dán vào Custom Liquid, không giải thích dài.
+
+######################################################################
+# ABOUT US
+######################################################################
+
+======================================================================
+11. ABOUT US
+======================================================================
+VAI TRÒ: Bạn là lập trình viên Shopify và copywriter thương hiệu.
+BỐI CẢNH: [BỐI CẢNH CHUNG]
+NHIỆM VỤ: Viết toàn bộ trang About Us (nội dung + code) cho template page.
+
+BỐ CỤC & HÀNH VI:
+- Nền #FFF7F3, cột nội dung căn giữa rộng tối đa ~600px.
+- Tiêu đề trang "ABOUT US" serif đậm màu #56392F, dưới là đường kẻ mảnh – ♡ – đường kẻ màu #C39762.
+- 8 phần + Join Us; mỗi phần: tiêu đề serif, các đoạn ngắn, câu kết màu #B47E70 in đậm; giữa các phần là đường kẻ mảnh #EAD7C9.
+- Phần Our Commitment có phụ đề serif màu #B47E70 "Personal Jewelry, Meaningful Choices".
+- Không có newsletter, không có footer trong section.
+
+NỘI DUNG CHỮ (dùng NGUYÊN VĂN, đúng thứ tự xuất hiện):
+- ABOUT US ♡
+- Our Story
+- At Luvetta Shop , we believe the smallest things can hold the biggest meaning.
+- A simple letter can tell a beautiful story.
+- It might be the first letter of your name, the initial of someone you love, or a little reminder of a memory you never want to forget.
+- That's what we love about personalized jewelry.
+- It doesn't need to be big, expensive, or complicated to feel special.
+- Sometimes, all it takes is a tiny heart and one meaningful letter.
+- Our Dainty Heart Initial Necklace brings those two little details together in a delicate design that feels personal without trying too hard.
+- Whether it's your own initial, your partner's, your best friend's, or someone who means the world to you, every letter carries its own meaning.
+- And that's the idea behind Luvetta Shop: jewelry that isn't just something you wear, but something that reminds you of what matters most.
+- A little heart. A letter that's yours. ♡
+- Our Mission
+- We believe jewelry should feel as personal as the person wearing it.
+- Our mission at Luvetta Shop is simple: to make meaningful, everyday jewelry feel accessible, beautiful, and easy to choose.
+- We love pieces that can fit naturally into your everyday life.
+- Something you can wear with your favorite sweater.
+- With a simple white tee.
+- On a coffee date, at work, or during an ordinary afternoon that turns into a special memory.
+- We want our jewelry to feel like a small part of your story, rather than something you save only for special occasions.
+- Because the little details are often the ones we remember.
+- Our Commitment
+- Personal Jewelry, Meaningful Choices
+- We believe choosing jewelry should be an enjoyable and personal experience.
+- That's why we focus on designs that let you express something meaningful through the smallest details.
+- With our Dainty Heart Initial Necklace, you can choose the letter that matters most to you.
+- Your initial.
+- Their initial.
+- A letter with a story behind it.
+- We also believe in being clear about the products we offer, giving you the information you need to make a choice that feels right.
+- And when you have a question, we want you to feel comfortable reaching out to us.
+- Little details. Real meaning.
+- A personal touch. ♡
+- A Letter That Means Something
+- No two people share exactly the same story.
+- So why should every necklace feel exactly the same?
+- Our Dainty Heart Initial Necklace lets you choose from
+- 26 letters, A–Z , available in
+- Gold or Silver finishes.
+- A tiny heart sits beside your chosen letter, creating a delicate combination of simplicity and personal meaning.
+- Maybe you choose the first letter of your own name.
+- Maybe it's the initial of someone you miss.
+- Or perhaps it's a letter that represents a beautiful new chapter in your life.
+- Whatever the reason, the meaning belongs to you.
+- One letter. Endless stories.
+- More Than Just Jewelry
+- To us, jewelry isn't only about how something looks.
+- It's also about how it makes you feel.
+- A familiar initial can bring a little comfort.
+- A tiny heart can remind you of someone special.
+- And a thoughtful gift can turn an ordinary moment into a memory worth keeping.
+- That's why we love jewelry with a personal meaning.
+- It can be simple.
+- It can be delicate.
+- It can be something you wear almost without thinking.
+- Yet every time you notice it, it can remind you of something wonderful.
+- Sometimes the smallest pieces carry the biggest feelings. ♡
+- Made for Everyday Moments
+- Beautiful jewelry doesn't have to wait for a special occasion.
+- We love delicate pieces that complement everyday outfits without taking over your look.
+- A little detail around your neck.
+- A touch of Gold or Silver.
+- A heart and a letter that feel uniquely yours.
+- From quiet mornings at home to dinner with friends, our initial necklace is designed with simple, versatile styling in mind.
+- Wear it on its own for a minimal look.
+- Or pair it with other favorite pieces to express your personal style.
+- There are no complicated rules.
+- Just choose the letter you love and wear it your way.
+- Everyday style, with a little more meaning.
+- A Thoughtful Gift, Just Because
+- Some of the best gifts are the ones that feel personal.
+- Not because they're the biggest or the most expensive.
+- But because someone took the time to think about what would make you smile.
+- A personalized initial necklace can be a sweet little surprise for so many moments.
+- Birthdays.
+- Anniversaries.
+- Friendship gifts.
+- A little thank-you.
+- Or simply, just because.
+- It's also a lovely way to celebrate yourself.
+- You don't need to wait for somebody else to give you something meaningful.
+- Sometimes, a little gift from you to you is enough.
+- A little gift. A lot of love. ♡
+- Join Us
+- There's something we hope every Luvetta Shop customer experiences.
+- Not just finding a pretty necklace.
+- But finding a little piece that feels like their own.
+- A reminder of someone they love.
+- A memory worth holding onto.
+- Or simply a small detail that makes an ordinary day feel a little more special.
+- That's what Luvetta Shop is all about.
+- Meaningful little moments.
+- Personal stories.
+- And the simple beauty of keeping something close to your heart.
+- Thank you for being part of our story.
+- Luvetta Shop —
+- A Little Heart. A Letter That's Yours. ♡
+
+THÔNG SỐ GIAO DIỆN (dùng ĐÚNG tên class và giá trị dưới đây; được thêm thuộc tính phụ nếu cần):
+:root { width: 100%; background: var(--lv-bg); color: var(--lv-text); padding: 60px 24px 85px; font-family: inherit }
+.luvetta-about__container { width: 100%; max-width: 660px; margin: 0 auto }
+.luvetta-about__header { text-align: center; margin: 0 0 45px }
+.luvetta-about__header h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: clamp(32px, 4vw, 42px); font-weight: 800; line-height: 1.2; letter-spacing: 0.5px; color: var(--lv-heading) }
+.luvetta-about__title-decoration { display: flex; align-items: center; justify-content: center; gap: 13px }
+.luvetta-about__title-decoration > span:not(.luvetta-about__heart) { width: 55px; height: 1px; background: var(--lv-gold); opacity: 0.65 }
+.luvetta-about__heart { color: var(--lv-accent); font-size: 26px; line-height: 1 }
+.luvetta-about__section { padding: 0 0 38px; margin: 0 0 42px; border-bottom: 1px solid var(--lv-line) }
+.luvetta-about__section h2 { color: var(--lv-heading); font-family: Georgia, "Times New Roman", serif; font-size: clamp(22px, 2.5vw, 27px); line-height: 1.35; font-weight: 700; margin: 0 0 18px }
+.luvetta-about__section h3 { color: var(--lv-accent); font-family: Georgia, "Times New Roman", serif; font-size: 17px; font-weight: 700; line-height: 1.45; margin: 0 0 15px }
+.luvetta-about__section p { color: var(--lv-text); font-size: 14px; line-height: 1.85; letter-spacing: 0.1px; font-weight: 400; margin: 0 0 13px }
+.luvetta-about__section strong { color: var(--lv-heading); font-weight: 700 }
+.luvetta-about__section .luvetta-about__emphasis { color: var(--lv-accent); font-size: 14px; line-height: 1.75; font-weight: 700 }
+.luvetta-about__last { border-bottom: none }
+.luvetta-about__section .luvetta-about__closing { color: var(--lv-accent); font-size: 15px; line-height: 1.75; font-weight: 800; margin: 23px 0 0 }
+
+RESPONSIVE:
+@media screen and (max-width: 900px):
+  :root { padding: 48px 25px 72px }
+  .luvetta-about__container { max-width: 620px }
+@media screen and (max-width: 749px):
+  :root { padding: 38px 20px 58px }
+  .luvetta-about__header h1 { font-size: 32px }
+  .luvetta-about__section h2 { font-size: 22px }
+  .luvetta-about__section h3 { font-size: 16px }
+  .luvetta-about__section p { font-size: 13.5px; line-height: 1.8 }
+  .luvetta-about__section .luvetta-about__emphasis { font-size: 13.5px }
+
+YÊU CẦU KỸ THUẬT:
+- Không dùng thư viện ngoài; CSS và JS nằm gọn trong một khối, mọi class có prefix riêng như trên để không đụng CSS của theme.
+- Chỉ dùng Liquid chạy được trong khối Custom Liquid (không dùng section.settings, không cần {% schema %}).
+- Section phải hiển thị ngay khi dán code.
+
+TỰ KIỂM TRA trước khi trả lời: đối chiếu từng mục NỘI DUNG CHỮ và THÔNG SỐ GIAO DIỆN ở trên, không bỏ sót, không đổi chữ, không đổi màu.
+ĐỊNH DẠNG TRẢ VỀ: một khối code hoàn chỉnh để dán vào Custom Liquid, không giải thích dài.

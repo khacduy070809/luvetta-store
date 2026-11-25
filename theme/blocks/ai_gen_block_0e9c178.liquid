@@ -1,0 +1,328 @@
+{% doc %}
+  @prompt
+    Create a countdown timer banner to place above the header. Requirements:
+    - Counts down exactly 3 hours from first visit using localStorage to persist across page refreshes
+    - Displays bold text "DEAL ENDS IN:" followed by live countdown in HH:MM:SS format
+    - When timer reaches zero, the entire banner hides permanently (use localStorage to remember, never resets)
+    - Eye-catching design: red or dark background, white bold text, centered
+    - Pure HTML/CSS/JavaScript only, no external libraries
+    - Implement as a Shopify Liquid section
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-countdown-banner-{{ ai_gen_id }} {
+    display: block;
+    width: 100%;
+    background: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding_vertical }}px 20px;
+    text-align: center;
+    position: relative;
+    z-index: 1000;
+  }
+
+  .ai-countdown-banner-{{ ai_gen_id }}.ai-countdown-hidden-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  .ai-countdown-banner__content-{{ ai_gen_id }} {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: {{ block.settings.text_spacing }}px;
+    flex-wrap: wrap;
+  }
+
+  .ai-countdown-banner__label-{{ ai_gen_id }} {
+    color: {{ block.settings.text_color }};
+    font-size: {{ block.settings.label_font_size }}px;
+    font-weight: {{ block.settings.label_font_weight }};
+    letter-spacing: 0.5px;
+    margin: 0;
+  }
+
+  .ai-countdown-banner__timer-{{ ai_gen_id }} {
+    color: {{ block.settings.timer_color }};
+    font-size: {{ block.settings.timer_font_size }}px;
+    font-weight: {{ block.settings.timer_font_weight }};
+    font-family: monospace;
+    letter-spacing: 1px;
+    margin: 0;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-countdown-banner__label-{{ ai_gen_id }} {
+      font-size: {{ block.settings.label_font_size | times: 0.85 }}px;
+    }
+
+    .ai-countdown-banner__timer-{{ ai_gen_id }} {
+      font-size: {{ block.settings.timer_font_size | times: 0.85 }}px;
+    }
+
+    .ai-countdown-banner__content-{{ ai_gen_id }} {
+      gap: {{ block.settings.text_spacing | times: 0.7 }}px;
+    }
+  }
+{% endstyle %}
+
+<countdown-timer-{{ ai_gen_id }}
+  class="ai-countdown-banner-{{ ai_gen_id }}"
+  data-duration="{{ block.settings.countdown_hours }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-countdown-banner__content-{{ ai_gen_id }}">
+    <p class="ai-countdown-banner__label-{{ ai_gen_id }}">{{ block.settings.banner_text }}</p>
+<p class="ai-countdown-banner__timer-{{ ai_gen_id }}" id="ai-countdown-timer-{{ ai_gen_id }}">00:00:00</p>
+<p class="ai-countdown-banner__label-{{ ai_gen_id }}">— Free Shipping included</p>
+
+  </div>
+</countdown-timer-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CountdownTimer{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.storageKey = 'ai_countdown_{{ ai_gen_id }}_end';
+        this.hiddenKey = 'ai_countdown_{{ ai_gen_id }}_hidden';
+        this.timerDisplay = this.querySelector('#ai-countdown-timer-{{ ai_gen_id }}');
+        this.durationHours = parseFloat(this.dataset.duration);
+        this.intervalId = null;
+      }
+
+      connectedCallback() {
+        if (this.isHidden()) {
+          this.classList.add('ai-countdown-hidden-{{ ai_gen_id }}');
+          return;
+        }
+
+        this.initializeTimer();
+        this.startCountdown();
+      }
+
+      disconnectedCallback() {
+        if (this.intervalId) {
+          clearInterval(this.intervalId);
+        }
+      }
+
+      isHidden() {
+        return localStorage.getItem(this.hiddenKey) === 'true';
+      }
+
+      initializeTimer() {
+        let endTime = localStorage.getItem(this.storageKey);
+
+        if (!endTime) {
+          const now = new Date().getTime();
+          endTime = now + (this.durationHours * 60 * 60 * 1000);
+          localStorage.setItem(this.storageKey, endTime);
+        }
+
+        this.endTime = parseInt(endTime);
+      }
+
+      startCountdown() {
+        this.updateDisplay();
+
+        this.intervalId = setInterval(() => {
+          this.updateDisplay();
+        }, 1000);
+      }
+
+      updateDisplay() {
+        const now = new Date().getTime();
+        const distance = this.endTime - now;
+
+        if (distance <= 0) {
+          this.handleExpired();
+          return;
+        }
+
+        const hours = Math.floor(distance / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        const formattedTime = 
+          String(hours).padStart(2, '0') + ':' +
+          String(minutes).padStart(2, '0') + ':' +
+          String(seconds).padStart(2, '0');
+
+        this.timerDisplay.textContent = formattedTime;
+      }
+
+      handleExpired() {
+        if (this.intervalId) {
+          clearInterval(this.intervalId);
+        }
+
+        localStorage.setItem(this.hiddenKey, 'true');
+        this.classList.add('ai-countdown-hidden-{{ ai_gen_id }}');
+      }
+    }
+
+    customElements.define('countdown-timer-{{ ai_gen_id }}', CountdownTimer{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Countdown timer banner",
+  "tag": null,
+  "settings": [
+    {
+      "type": "header",
+      "content": "Timer settings"
+    },
+    {
+      "type": "range",
+      "id": "countdown_hours",
+      "label": "Countdown duration",
+      "min": 1,
+      "max": 24,
+      "step": 1,
+      "unit": "hr",
+      "default": 3
+    },
+    {
+      "type": "paragraph",
+      "content": "Timer starts on first visit and persists across page refreshes. When it reaches zero, the banner hides permanently."
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "banner_text",
+      "label": "Banner text",
+      "default": "⏰ Ships today if ordered in"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background",
+      "default": "#d32f2f"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Label text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "timer_color",
+      "label": "Timer text",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "label_font_size",
+      "label": "Label font size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "label_font_weight",
+      "label": "Label font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "900",
+          "label": "Extra bold"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "range",
+      "id": "timer_font_size",
+      "label": "Timer font size",
+      "min": 14,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "select",
+      "id": "timer_font_weight",
+      "label": "Timer font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "600",
+          "label": "Semi-bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        },
+        {
+          "value": "900",
+          "label": "Extra bold"
+        }
+      ],
+      "default": "700"
+    },
+    {
+      "type": "header",
+      "content": "Spacing"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "text_spacing",
+      "label": "Space between text and timer",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    }
+  ],
+  "presets": [
+    {
+      "name": "Countdown timer banner"
+    }
+  ]
+}
+{% endschema %}

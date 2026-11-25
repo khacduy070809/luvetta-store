@@ -1,0 +1,4 @@
+variant,letter,color,sku,price_usd,units,sales_usd
+A / Gold,A,Gold,SUM-HI-A-GOLD,5,2,10
+L / Silver,L,Silver,SUM-HI-L-SILVER,5,1,5
+S / Gold,S,Gold,SUM-HI-S-GOLD,5,1,5
