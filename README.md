@@ -19,12 +19,13 @@
 
 ## Thành viên nhóm
 
-| STT | Họ và tên | Mã sinh viên | Phụ trách |
-|---|---|---|---|
-| 1 | _(cập nhật)_ | | |
-| 2 | _(cập nhật)_ | | |
-| 3 | _(cập nhật)_ | | |
-| 4 | _(cập nhật)_ | | |
+| STT | Họ và tên |
+|---|---|
+| 1 | Nguyễn Khắc Duy |
+| 2 | Trần Thị Diễm Kiều |
+| 3 | Nguyễn Thị Loan |
+| 4 | Nguyễn Thu Hà |
+| 5 | Trịnh Xuân Hoàn |
 
 ## Mục lục
 
